@@ -1,7 +1,7 @@
 {
     "name": "Latch plugin catalog",
     "latch_min_version": "0.4.0",
-    "release": "v1.0.0",
+    "release": "v1.0.1",
     "plugins": [
         {
             "slug": "forum-stats",
@@ -30,7 +30,7 @@
         {
             "slug": "spam-bridge",
             "name": "Spam bridge",
-            "version": "1.0.0",
+            "version": "1.0.2",
             "min_latch_version": "0.4.0",
             "summary": "Akismet and Stop Forum Spam checks for posts and registrations.",
             "hooks": ["post.before_save", "user.register"],

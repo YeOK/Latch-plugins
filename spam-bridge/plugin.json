@@ -1,7 +1,7 @@
 {
     "name": "Spam bridge",
     "slug": "spam-bridge",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "min_latch_version": "0.4.0",
     "description": "Akismet and Stop Forum Spam checks for posts and new registrations.",
     "hooks": [

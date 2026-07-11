@@ -17,6 +17,7 @@ namespace Latch\Plugins\SpamBridge;
 final class HttpTransport
 {
     private const TIMEOUT_SECONDS = 8;
+    private const USER_AGENT = 'Latch-SpamBridge/1.0 (+https://latch.network)';
 
     /**
      * @param ?callable(string $method, string $url, ?string $body): ?string $handler Test hook.
@@ -58,6 +59,8 @@ final class HttpTransport
             return $this->requestViaCurl($method, $url, $headers, $body);
         }
 
+        $headers = $this->withUserAgent($headers);
+
         if ($method === 'GET') {
             $context = stream_context_create([
                 'http' => [
@@ -65,6 +68,10 @@ final class HttpTransport
                     'timeout' => self::TIMEOUT_SECONDS,
                     'header' => implode("\r\n", $headers),
                     'ignore_errors' => true,
+                ],
+                'ssl' => [
+                    'verify_peer' => true,
+                    'verify_peer_name' => true,
                 ],
             ]);
 
@@ -80,6 +87,10 @@ final class HttpTransport
                 'header' => implode("\r\n", $headers),
                 'content' => $body ?? '',
                 'ignore_errors' => true,
+            ],
+            'ssl' => [
+                'verify_peer' => true,
+                'verify_peer_name' => true,
             ],
         ]);
 
@@ -100,9 +111,12 @@ final class HttpTransport
 
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => self::TIMEOUT_SECONDS,
             CURLOPT_TIMEOUT => self::TIMEOUT_SECONDS,
-            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_HTTPHEADER => $this->withUserAgent($headers),
             CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
         ]);
 
         if ($method === 'POST' && $body !== null) {
@@ -113,5 +127,22 @@ final class HttpTransport
         curl_close($ch);
 
         return is_string($result) ? $result : null;
+    }
+
+    /**
+     * @param list<string> $headers
+     * @return list<string>
+     */
+    private function withUserAgent(array $headers): array
+    {
+        foreach ($headers as $header) {
+            if (stripos($header, 'User-Agent:') === 0) {
+                return $headers;
+            }
+        }
+
+        $headers[] = 'User-Agent: ' . self::USER_AGENT;
+
+        return $headers;
     }
 }

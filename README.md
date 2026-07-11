@@ -11,7 +11,7 @@ Official distributable plugins for [Latch](https://github.com/YeOK/Latch) — in
 | [forum-stats](forum-stats/) | 1.0.0 | Home page totals — posts, topics, members |
 | [image-upload](image-upload/) | 1.1.0 | Cloudflare R2 presigned PUT + compose **Image** button |
 | [word-filter](word-filter/) | 1.0.0 | Block or mask profanity on `post.before_save` |
-| [spam-bridge](spam-bridge/) | 1.0.0 | Akismet + Stop Forum Spam; `spam_log` in plugin SQLite |
+| [spam-bridge](spam-bridge/) | 1.0.2 | Akismet + Stop Forum Spam; `spam_log` in plugin SQLite |
 | [slack-notify](slack-notify/) | 1.0.0 | Slack/Discord incoming webhook on posts and registrations |
 
 Machine-readable index: [`catalog.json`](catalog.json).

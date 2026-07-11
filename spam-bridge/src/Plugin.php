@@ -22,7 +22,6 @@ final class Plugin implements PluginInterface
     {
         $app = $context->app();
         $storageRoot = (string) $app->config()->get('paths.storage');
-        $settings = Settings::load($storageRoot, $context->manifest());
         $config = PluginConfig::fromApp($app);
 
         $transport = new HttpTransport();
@@ -30,9 +29,10 @@ final class Plugin implements PluginInterface
             ? new AkismetClient($config->akismetApiKey ?? '', $transport)
             : null;
         $sfs = new StopForumSpamClient($transport);
-        $log = new SpamLog($context->database(), $settings->logRejects);
+        $log = new SpamLog($context->database());
         $checker = new SpamChecker(
-            $settings,
+            $storageRoot,
+            $context->manifest(),
             $config,
             $akismet,
             $sfs,

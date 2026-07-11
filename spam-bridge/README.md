@@ -45,6 +45,15 @@ Admin → Plugins → **Spam bridge** → Settings shows whether the Akismet key
 
 If an API is unreachable or Akismet is not configured, that provider is skipped — posts are not blocked solely due to network errors.
 
+## Troubleshooting
+
+**Provider set to Stop Forum Spam but nothing happens**
+
+1. **Staff bypass** (default: on) — admins and moderators skip all external checks. Test with a member account, or turn off **Staff bypass** while validating.
+2. **Strictness** — at `1` (default), SFS only blocks blacklist hits (`frequency` 255). Use `2` (confidence threshold) or `3` (any SFS hit) for broader coverage.
+3. **Outbound HTTPS** — the server must reach `api.stopforumspam.org` (PHP `curl` or `allow_url_fopen`). Failed lookups fail open; check `spam_log` for `sfs:unavailable` reasons when logging is on.
+4. **Settings file** — confirm `storage/plugins/spam-bridge/settings.json` exists and contains `"provider": "stop_forum_spam"` after save. If the file is missing, the admin save failed (usually `storage/plugins/spam-bridge/` owned by root after `sudo php bin/latch plugin enable`). Fix: `sudo chown -R apache:apache storage/plugins/spam-bridge` then save again in admin (or run `plugin enable` as `sudo -u apache`).
+
 ## Storage
 
 - `storage/plugins/spam-bridge/plugin.sqlite` — `spam_log` table (migration `001_spam_log.sql`)

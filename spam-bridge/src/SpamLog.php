@@ -20,7 +20,6 @@ final class SpamLog
 {
     public function __construct(
         private readonly ?PluginDatabase $database,
-        private readonly bool $enabled,
     ) {
     }
 
@@ -34,8 +33,9 @@ final class SpamLog
         ?int $postId,
         string $reason,
         array $payload = [],
+        bool $enabled = true,
     ): void {
-        if (!$this->enabled || $this->database === null) {
+        if (!$enabled || $this->database === null) {
             return;
         }
 

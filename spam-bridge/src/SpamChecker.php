@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Latch\Plugins\SpamBridge;
 
+use Latch\Core\Plugins\PluginManifest;
 use Latch\Core\Plugins\PostSaveContext;
 use Latch\Core\Request;
 
@@ -22,7 +23,8 @@ final class SpamChecker
     private const BLOCK_MESSAGE = 'Your submission was flagged as spam. Contact an administrator if you believe this is an error.';
 
     public function __construct(
-        private readonly Settings $settings,
+        private readonly string $storageRoot,
+        private readonly PluginManifest $manifest,
         private readonly PluginConfig $config,
         private readonly ?AkismetClient $akismet,
         private readonly StopForumSpamClient $sfs,
@@ -35,7 +37,9 @@ final class SpamChecker
 
     public function checkPost(PostSaveContext $ctx): ?string
     {
-        if ($this->shouldBypassStaff($ctx->user)) {
+        $settings = $this->settings();
+
+        if ($this->shouldBypassStaff($ctx->user, $settings)) {
             return null;
         }
 
@@ -52,7 +56,7 @@ final class SpamChecker
 
         $akismetSpam = false;
         $akismetPayload = [];
-        if ($this->settings->usesAkismet() && $this->akismet !== null) {
+        if ($settings->usesAkismet() && $this->akismet !== null) {
             $akismetPayload = $this->akismet->commentCheck([
                 'blog' => $this->siteUrl,
                 'user_ip' => $this->request->ip(),
@@ -71,7 +75,7 @@ final class SpamChecker
         $sfsPayload = [];
         $sfsMatches = [];
         $sfsFlagged = false;
-        if ($this->settings->usesStopForumSpam()) {
+        if ($settings->usesStopForumSpam()) {
             $sfsPayload = $this->sfs->check([
                 'ip' => $this->request->ip(),
                 'email' => $email,
@@ -99,9 +103,10 @@ final class SpamChecker
                 'stop_forum_spam' => $sfsPayload,
                 'kind' => $ctx->kind,
             ],
+            enabled: $settings->logRejects,
         );
 
-        if (!$this->shouldBlock($akismetSpam, $sfsMatches)) {
+        if (!$this->shouldBlock($akismetSpam, $sfsMatches, $settings)) {
             return null;
         }
 
@@ -113,11 +118,13 @@ final class SpamChecker
      */
     public function checkRegistration(array $user): void
     {
-        if (!$this->settings->checkRegistrations) {
+        $settings = $this->settings();
+
+        if (!$settings->checkRegistrations) {
             return;
         }
 
-        if ($this->shouldBypassStaff($user)) {
+        if ($this->shouldBypassStaff($user, $settings)) {
             return;
         }
 
@@ -126,7 +133,7 @@ final class SpamChecker
         $email = (string) ($user['email'] ?? '');
         $akismetSpam = false;
         $akismetPayload = [];
-        if ($this->settings->usesAkismet() && $this->akismet !== null) {
+        if ($settings->usesAkismet() && $this->akismet !== null) {
             $akismetPayload = $this->akismet->commentCheck([
                 'blog' => $this->siteUrl,
                 'user_ip' => $this->request->ip(),
@@ -143,7 +150,7 @@ final class SpamChecker
         $sfsPayload = [];
         $sfsMatches = [];
         $sfsFlagged = false;
-        if ($this->settings->usesStopForumSpam()) {
+        if ($settings->usesStopForumSpam()) {
             $sfsPayload = $this->sfs->check([
                 'ip' => $this->request->ip(),
                 'email' => $email,
@@ -170,19 +177,25 @@ final class SpamChecker
                 'akismet' => $akismetPayload,
                 'stop_forum_spam' => $sfsPayload,
             ],
+            enabled: $settings->logRejects,
         );
 
-        if ($userId > 0 && $this->shouldBlock($akismetSpam, $sfsMatches)) {
+        if ($userId > 0 && $this->shouldBlock($akismetSpam, $sfsMatches, $settings)) {
             $this->registrationEnforcer->banSpamRegistration($userId, $provider);
         }
+    }
+
+    private function settings(): Settings
+    {
+        return Settings::load($this->storageRoot, $this->manifest);
     }
 
     /**
      * @param array<string, mixed> $user
      */
-    private function shouldBypassStaff(array $user): bool
+    private function shouldBypassStaff(array $user, Settings $settings): bool
     {
-        if (!$this->settings->staffBypass) {
+        if (!$settings->staffBypass) {
             return false;
         }
 
@@ -226,22 +239,22 @@ final class SpamChecker
     /**
      * @param list<array{field: string, appears: bool, frequency: int, confidence: float}> $matches
      */
-    private function sfsShouldBlock(array $matches): bool
+    private function sfsShouldBlock(array $matches, Settings $settings): bool
     {
         foreach ($matches as $match) {
             if (!($match['appears'] ?? false)) {
                 continue;
             }
 
-            if ($this->settings->strictness === 1 && (int) ($match['frequency'] ?? 0) >= 255) {
+            if ($settings->strictness === 1 && (int) ($match['frequency'] ?? 0) >= 255) {
                 return true;
             }
 
-            if ($this->settings->strictness === 2 && (float) ($match['confidence'] ?? 0.0) >= $this->settings->sfsMinConfidence) {
+            if ($settings->strictness === 2 && (float) ($match['confidence'] ?? 0.0) >= $settings->sfsMinConfidence) {
                 return true;
             }
 
-            if ($this->settings->strictness >= 3) {
+            if ($settings->strictness >= 3) {
                 return true;
             }
         }
@@ -252,21 +265,21 @@ final class SpamChecker
     /**
      * @param list<array{field: string, appears: bool, frequency: int, confidence: float}> $sfsMatches
      */
-    private function shouldBlock(bool $akismetSpam, array $sfsMatches): bool
+    private function shouldBlock(bool $akismetSpam, array $sfsMatches, Settings $settings): bool
     {
-        if ($this->settings->strictness === 0) {
+        if ($settings->strictness === 0) {
             return false;
         }
 
-        if ($akismetSpam && $this->settings->usesAkismet()) {
+        if ($akismetSpam && $settings->usesAkismet()) {
             return true;
         }
 
-        if (!$this->settings->usesStopForumSpam()) {
+        if (!$settings->usesStopForumSpam()) {
             return false;
         }
 
-        return $this->sfsShouldBlock($sfsMatches);
+        return $this->sfsShouldBlock($sfsMatches, $settings);
     }
 
     /**
