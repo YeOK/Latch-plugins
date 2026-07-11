@@ -1,0 +1,70 @@
+{
+    "name": "Slack notify",
+    "slug": "slack-notify",
+    "version": "1.0.0",
+    "min_latch_version": "0.4.0",
+    "description": "Post forum activity to a Slack or Discord incoming webhook.",
+    "hooks": [
+        "post.after_save",
+        "user.register"
+    ],
+    "secrets_schema": [
+        {
+            "key": "webhook_url",
+            "config_path": "plugins.slack_notify.webhook_url",
+            "label": "Incoming webhook URL",
+            "description": "Slack or Discord incoming webhook (HTTPS only)."
+        }
+    ],
+    "settings_schema": [
+        {
+            "key": "bot_name",
+            "type": "string",
+            "label": "Bot display name",
+            "description": "Shown as the webhook username in chat.",
+            "default": "Latch"
+        },
+        {
+            "key": "events",
+            "type": "multiselect",
+            "label": "Notify on",
+            "default": [
+                "new_topic",
+                "new_reply"
+            ],
+            "options": [
+                {
+                    "value": "new_topic",
+                    "label": "New topics"
+                },
+                {
+                    "value": "new_reply",
+                    "label": "New replies"
+                },
+                {
+                    "value": "user_registered",
+                    "label": "New registrations"
+                }
+            ]
+        },
+        {
+            "key": "include_excerpt",
+            "type": "boolean",
+            "label": "Include post excerpt",
+            "description": "Append a short plain-text preview of the post body.",
+            "default": true
+        },
+        {
+            "key": "notify_pending",
+            "type": "boolean",
+            "label": "Notify on pending approval",
+            "description": "Also send when posts are awaiting mod approval.",
+            "default": false
+        }
+    ],
+    "permissions": {
+        "filesystem": [],
+        "network": true,
+        "config": []
+    }
+}

@@ -1,0 +1,48 @@
+{
+    "name": "Latch plugin catalog",
+    "latch_min_version": "0.4.0",
+    "release": "v1.0.0",
+    "plugins": [
+        {
+            "slug": "forum-stats",
+            "name": "Forum stats",
+            "version": "1.0.0",
+            "min_latch_version": "0.3.0",
+            "summary": "Public forum totals on the home page — posts, topics, and registered members.",
+            "hooks": ["home.after_boards", "route.register", "theme.assets"]
+        },
+        {
+            "slug": "image-upload",
+            "name": "Image upload (R2)",
+            "version": "1.1.0",
+            "min_latch_version": "0.4.0",
+            "summary": "Direct browser upload to Cloudflare R2 with compose toolbar integration.",
+            "hooks": ["route.register", "theme.assets", "theme.scripts", "editor.compose", "post.format.image_host", "csp.img_src", "csp.connect_src", "post.before_save"]
+        },
+        {
+            "slug": "word-filter",
+            "name": "Word filter",
+            "version": "1.0.0",
+            "min_latch_version": "0.3.0",
+            "summary": "Block or mask profanity in posts and new topic titles before save.",
+            "hooks": ["post.before_save"]
+        },
+        {
+            "slug": "spam-bridge",
+            "name": "Spam bridge",
+            "version": "1.0.0",
+            "min_latch_version": "0.4.0",
+            "summary": "Akismet and Stop Forum Spam checks for posts and registrations.",
+            "hooks": ["post.before_save", "user.register"],
+            "database": true
+        },
+        {
+            "slug": "slack-notify",
+            "name": "Slack notify",
+            "version": "1.0.0",
+            "min_latch_version": "0.4.0",
+            "summary": "Post forum activity to a Slack or Discord incoming webhook.",
+            "hooks": ["post.after_save", "user.register"]
+        }
+    ]
+}

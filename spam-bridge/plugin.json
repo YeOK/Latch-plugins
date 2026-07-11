@@ -1,0 +1,88 @@
+{
+    "name": "Spam bridge",
+    "slug": "spam-bridge",
+    "version": "1.0.0",
+    "min_latch_version": "0.4.0",
+    "description": "Akismet and Stop Forum Spam checks for posts and new registrations.",
+    "hooks": [
+        "post.before_save",
+        "user.register"
+    ],
+    "database": {
+        "enabled": true
+    },
+    "secrets_schema": [
+        {
+            "key": "akismet_api_key",
+            "config_path": "plugins.spam_bridge.akismet_api_key",
+            "label": "Akismet API key",
+            "description": "From akismet.com/account \u2014 required when provider is Akismet or Both."
+        }
+    ],
+    "settings_schema": [
+        {
+            "key": "provider",
+            "type": "select",
+            "label": "Provider",
+            "default": "akismet",
+            "options": [
+                {
+                    "value": "akismet",
+                    "label": "Akismet"
+                },
+                {
+                    "value": "stop_forum_spam",
+                    "label": "Stop Forum Spam"
+                },
+                {
+                    "value": "both",
+                    "label": "Both (block if either flags spam)"
+                }
+            ]
+        },
+        {
+            "key": "strictness",
+            "type": "integer",
+            "label": "Strictness",
+            "description": "0 = log only; 1 = block definite spam; 2 = block high-confidence SFS; 3 = block any SFS hit.",
+            "default": 1,
+            "min": 0,
+            "max": 3
+        },
+        {
+            "key": "sfs_min_confidence",
+            "type": "integer",
+            "label": "SFS min confidence %",
+            "description": "Used when strictness is 2.",
+            "default": 90,
+            "min": 1,
+            "max": 100
+        },
+        {
+            "key": "staff_bypass",
+            "type": "boolean",
+            "label": "Staff bypass",
+            "description": "Admins and moderators skip external spam checks.",
+            "default": true
+        },
+        {
+            "key": "check_registrations",
+            "type": "boolean",
+            "label": "Check registrations",
+            "description": "Run checks on new accounts; spam registrations are banned automatically when strictness > 0.",
+            "default": true
+        },
+        {
+            "key": "log_rejects",
+            "type": "boolean",
+            "label": "Log rejects",
+            "description": "Write rejected checks to plugin.sqlite spam_log table.",
+            "default": true
+        }
+    ],
+    "permissions": {
+        "filesystem": [],
+        "network": true,
+        "config": []
+    }
+}

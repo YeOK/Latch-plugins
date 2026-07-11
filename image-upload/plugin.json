@@ -1,0 +1,98 @@
+{
+    "name": "Image upload (R2)",
+    "slug": "image-upload",
+    "version": "1.1.0",
+    "min_latch_version": "0.4.0",
+    "description": "Insert post images via direct browser upload to Cloudflare R2 (images.forum.example.com).",
+    "hooks": [
+        "route.register",
+        "theme.assets",
+        "theme.scripts",
+        "editor.compose",
+        "post.format.image_host",
+        "csp.img_src",
+        "csp.connect_src",
+        "post.before_save"
+    ],
+    "secrets_schema": [
+        {
+            "key": "account_id",
+            "config_path": "plugins.image_upload.account_id",
+            "label": "Cloudflare account ID"
+        },
+        {
+            "key": "access_key_id",
+            "config_path": "plugins.image_upload.access_key_id",
+            "label": "R2 access key ID"
+        },
+        {
+            "key": "secret_access_key",
+            "config_path": "plugins.image_upload.secret_access_key",
+            "label": "R2 secret access key"
+        },
+        {
+            "key": "bucket",
+            "config_path": "plugins.image_upload.bucket",
+            "label": "R2 bucket name"
+        },
+        {
+            "key": "public_host",
+            "config_path": "plugins.image_upload.public_host",
+            "label": "Public CDN hostname",
+            "description": "Custom domain for uploaded images (no https://), e.g. images.forum.example.com"
+        }
+    ],
+    "settings_schema": [
+        {
+            "key": "max_mb",
+            "type": "integer",
+            "label": "Max upload size (MB)",
+            "default": 8,
+            "min": 1,
+            "max": 32
+        },
+        {
+            "key": "key_prefix",
+            "type": "string",
+            "label": "Object key prefix",
+            "description": "R2 object path prefix (e.g. forum/). A trailing slash is added automatically.",
+            "default": "forum/"
+        },
+        {
+            "key": "allowed_types",
+            "type": "multiselect",
+            "label": "Allowed image types",
+            "default": [
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/webp"
+            ],
+            "options": [
+                {
+                    "value": "image/jpeg",
+                    "label": "JPEG"
+                },
+                {
+                    "value": "image/png",
+                    "label": "PNG"
+                },
+                {
+                    "value": "image/gif",
+                    "label": "GIF"
+                },
+                {
+                    "value": "image/webp",
+                    "label": "WebP"
+                }
+            ]
+        }
+    ],
+    "permissions": {
+        "filesystem": [],
+        "network": [],
+        "config": [
+            "plugins.image_upload"
+        ]
+    }
+}
