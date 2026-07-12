@@ -4,7 +4,7 @@ Official distributable plugins for [Latch](https://github.com/YeOK/Latch) — in
 
 **Requires:** Latch **0.4.0+** (some plugins need **0.4.0** for settings DB, plugin SQLite, or image-upload secrets split). Always run `plugin-audit` before `plugin enable`.
 
-## Catalog (v1.0.0)
+## Catalog (v1.0.1)
 
 | Plugin | Version | Summary |
 |--------|---------|---------|
@@ -43,17 +43,17 @@ php bin/latch plugin enable forum-stats
 ### Bundle (all tier-1 plugins)
 
 ```bash
-php bin/latch plugin install ./latch-plugins-v1.0.0.zip
+php bin/latch plugin install ./latch-plugins-1.0.1.zip
 # installs each slug under plugins/ — still disabled until you enable individually
 ```
 
 ## Build release zips (maintainers)
 
 ```bash
-./scripts/build-zips.sh v1.0.0
+./scripts/build-zips.sh v1.0.1
 ```
 
-Writes per-plugin zips and a bundle to `releases/`. Attach them to a GitHub Release tagged `v1.0.0`.
+Writes per-plugin zips (`{slug}-{version}.zip`) and a bundle to `releases/`. Attach them to a GitHub Release tagged `v1.0.1`. The `version` in `catalog.json` must match each zip filename.
 
 ## Not in this catalog
 
