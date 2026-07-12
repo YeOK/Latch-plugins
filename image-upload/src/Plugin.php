@@ -87,8 +87,12 @@ final class Plugin implements PluginInterface
 
         $context->hooks()->add(
             HookName::EDITOR_COMPOSE,
-            static fn (): string => '<button type="button" class="composer-btn" data-action="image-upload" title="Insert image">'
-                . '<span class="composer-btn-label">Image</span></button>',
+            static fn (): string => '<button type="button" class="composer-btn composer-btn--text" data-action="image-upload" title="Insert image">'
+                . '<svg class="composer-btn-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">'
+                . '<rect x="2.2" y="3.4" width="11.6" height="9.2" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.5"/>'
+                . '<circle cx="5.8" cy="6.8" r="1.1" fill="currentColor" stroke="none"/>'
+                . '<path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M3.8 11.2 6.6 8.4l2 2 1.8-1.8 2.4 2.6"/>'
+                . '</svg><span class="composer-btn-label">Image</span></button>',
         );
 
         $context->hooks()->add(

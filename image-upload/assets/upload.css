@@ -4,8 +4,7 @@
  */
 
 .composer-btn[data-action="image-upload"] .composer-btn-label {
-    font-size: 0.85em;
-    font-weight: 600;
+    font: inherit;
 }
 
 .composer-btn[data-action="image-upload"].is-busy {
