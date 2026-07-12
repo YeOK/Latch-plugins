@@ -1,7 +1,7 @@
 {
     "name": "Latch plugin catalog",
     "latch_min_version": "0.4.0",
-    "release": "v1.0.1",
+    "release": "v1.0.0",
     "plugins": [
         {
             "slug": "forum-stats",
