@@ -4,15 +4,16 @@ Official distributable plugins for [Latch](https://github.com/YeOK/Latch) — in
 
 **Requires:** Latch **0.4.0+** (some plugins need **0.4.0** for settings DB, plugin SQLite, or image-upload secrets split). Always run `plugin-audit` before `plugin enable`.
 
-## Catalog (v1.0.1)
+## Catalog (v1.0.3)
 
 | Plugin | Version | Summary |
 |--------|---------|---------|
 | [forum-stats](forum-stats/) | 1.0.0 | Home page totals — posts, topics, members |
-| [image-upload](image-upload/) | 1.1.0 | Cloudflare R2 presigned PUT + compose **Image** button |
+| [image-upload](image-upload/) | 1.1.0 | Cloudflare R2 presigned PUT + compose **Image** button + post lightbox |
 | [word-filter](word-filter/) | 1.0.0 | Block or mask profanity on `post.before_save` |
 | [spam-bridge](spam-bridge/) | 1.0.2 | Akismet + Stop Forum Spam; `spam_log` in plugin SQLite |
 | [slack-notify](slack-notify/) | 1.0.0 | Slack/Discord incoming webhook on posts and registrations |
+| [link-preview](link-preview/) | 1.0.1 | Onebox link cards + lazy YouTube/Vimeo embeds for standalone URLs |
 
 Machine-readable index: [`catalog.json`](catalog.json).
 
@@ -43,17 +44,18 @@ php bin/latch plugin enable forum-stats
 ### Bundle (all tier-1 plugins)
 
 ```bash
-php bin/latch plugin install ./latch-plugins-1.0.1.zip
+php bin/latch plugin install ./latch-plugins-1.0.3.zip
 # installs each slug under plugins/ — still disabled until you enable individually
 ```
 
 ## Build release zips (maintainers)
 
 ```bash
-./scripts/build-zips.sh v1.0.1
+./scripts/build-zips.sh v1.0.3
+./scripts/publish-release.sh v1.0.3   # build + upload all zips to GitHub
 ```
 
-Writes per-plugin zips (`{slug}-{version}.zip`) and a bundle to `releases/`. Attach them to a GitHub Release tagged `v1.0.1`. The `version` in `catalog.json` must match each zip filename.
+Writes per-plugin zips (`{slug}-{version}.zip`) and a bundle to `releases/`. **Every** per-plugin zip must be attached to the GitHub Release — admin catalog install downloads `{slug}-{version}.zip` from that tag. The `release` field in `catalog.json` must match the tag; each plugin `version` must match its zip filename.
 
 ## Not in this catalog
 
