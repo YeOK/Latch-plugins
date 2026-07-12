@@ -56,11 +56,9 @@ final class Plugin implements PluginInterface
             },
         );
 
-        $oneboxCss = '/plugin/link-preview/onebox.css?v=' . rawurlencode($assetVersion);
         $context->hooks()->add(
-            HookName::LAYOUT_HEAD,
-            static fn (): string => '<link rel="stylesheet" href="' . htmlspecialchars($oneboxCss, ENT_QUOTES, 'UTF-8') . '" media="print" onload="this.media=\'all\'">'
-                . '<noscript><link rel="stylesheet" href="' . htmlspecialchars($oneboxCss, ENT_QUOTES, 'UTF-8') . '"></noscript>',
+            HookName::THEME_ASSETS,
+            static fn (): string => '/plugin/link-preview/onebox.css?v=' . rawurlencode($assetVersion),
         );
 
         if ($settings->embedVideos) {
