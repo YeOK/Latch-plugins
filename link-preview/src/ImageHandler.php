@@ -16,6 +16,9 @@ use Latch\Core\Response;
 final class ImageHandler
 {
     private const MAX_IMAGE_BYTES = 2097152;
+    private const THUMB_WIDTH = 320;
+    private const THUMB_HEIGHT = 240;
+    private const WEBP_QUALITY = 82;
 
     public function __construct(
         private readonly PreviewCache $cache,
@@ -32,11 +35,15 @@ final class ImageHandler
             return;
         }
 
-        $file = $this->thumbPath($urlHash);
-        if (is_file($file)) {
-            $this->serveFile($file);
+        $cached = $this->findCachedThumb($urlHash);
+        if ($cached !== null && str_ends_with($cached, '.webp')) {
+            $this->serveFile($cached);
 
             return;
+        }
+
+        if ($cached !== null) {
+            @unlink($cached);
         }
 
         $record = $this->cache->getByHash($urlHash);
@@ -59,9 +66,24 @@ final class ImageHandler
             return;
         }
 
-        $ext = $this->guessExtension($bytes, $record->imageUrl);
-        $target = $this->thumbPath($urlHash, $ext);
-        if (@file_put_contents($target, $bytes) === false) {
+        $processed = $this->resizeToWebp($bytes);
+        if ($processed === null) {
+            $ext = $this->guessExtension($bytes, $record->imageUrl);
+            $target = $this->thumbPath($urlHash, $ext);
+            if (@file_put_contents($target, $bytes) === false) {
+                Response::notFound();
+
+                return;
+            }
+
+            @chmod($target, 0640);
+            $this->serveFile($target);
+
+            return;
+        }
+
+        $target = $this->thumbPath($urlHash, 'webp');
+        if (@file_put_contents($target, $processed) === false) {
             Response::notFound();
 
             return;
@@ -71,20 +93,73 @@ final class ImageHandler
         $this->serveFile($target);
     }
 
-    private function thumbPath(string $urlHash, ?string $ext = null): string
+    private function findCachedThumb(string $urlHash): ?string
     {
-        if ($ext !== null) {
-            return $this->thumbsDir . '/' . $urlHash . '.' . $ext;
-        }
-
-        foreach (['jpg', 'jpeg', 'png', 'webp', 'gif'] as $candidate) {
-            $path = $this->thumbsDir . '/' . $urlHash . '.' . $candidate;
+        foreach (['webp', 'jpg', 'jpeg', 'png', 'gif'] as $candidate) {
+            $path = $this->thumbPath($urlHash, $candidate);
             if (is_file($path)) {
                 return $path;
             }
         }
 
-        return $this->thumbsDir . '/' . $urlHash . '.jpg';
+        return null;
+    }
+
+    private function thumbPath(string $urlHash, string $ext): string
+    {
+        return $this->thumbsDir . '/' . $urlHash . '.' . $ext;
+    }
+
+    private function resizeToWebp(string $bytes): ?string
+    {
+        if (!function_exists('imagecreatefromstring') || !function_exists('imagewebp')) {
+            return null;
+        }
+
+        $src = @imagecreatefromstring($bytes);
+        if ($src === false) {
+            return null;
+        }
+
+        $srcW = imagesx($src);
+        $srcH = imagesy($src);
+        if ($srcW <= 0 || $srcH <= 0) {
+            imagedestroy($src);
+
+            return null;
+        }
+
+        $maxW = self::THUMB_WIDTH;
+        $maxH = self::THUMB_HEIGHT;
+        $scale = max($maxW / $srcW, $maxH / $srcH);
+        $cropW = max(1, (int) round($maxW / $scale));
+        $cropH = max(1, (int) round($maxH / $scale));
+        $cropX = (int) round(($srcW - $cropW) / 2);
+        $cropY = (int) round(($srcH - $cropH) / 2);
+
+        $dst = imagecreatetruecolor($maxW, $maxH);
+        if ($dst === false) {
+            imagedestroy($src);
+
+            return null;
+        }
+
+        imagealphablending($dst, true);
+        imagecopyresampled($dst, $src, 0, 0, $cropX, $cropY, $maxW, $maxH, $cropW, $cropH);
+        imagedestroy($src);
+
+        ob_start();
+        $ok = imagewebp($dst, null, self::WEBP_QUALITY);
+        imagedestroy($dst);
+        if (!$ok) {
+            ob_end_clean();
+
+            return null;
+        }
+
+        $out = ob_get_clean();
+
+        return is_string($out) && $out !== '' ? $out : null;
     }
 
     private function guessExtension(string $bytes, string $url): string
@@ -125,7 +200,7 @@ final class ImageHandler
         $etag = '"' . hash('sha256', $path . '|' . filemtime($path)) . '"';
         http_response_code(200);
         header('Content-Type: ' . $type);
-        header('Cache-Control: public, max-age=86400');
+        header('Cache-Control: public, max-age=31536000, immutable');
         header('ETag: ' . $etag);
 
         $ifNoneMatch = $_SERVER['HTTP_IF_NONE_MATCH'] ?? '';

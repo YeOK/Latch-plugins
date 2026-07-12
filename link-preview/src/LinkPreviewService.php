@@ -35,6 +35,7 @@ final class LinkPreviewService
             return $html;
         }
 
+        $eagerThumb = PreviewLimiter::expansionCount() === 0;
         PreviewLimiter::recordExpansion();
 
         try {
@@ -43,6 +44,6 @@ final class LinkPreviewService
             return $html;
         }
 
-        return $this->renderer->render($record, $safeUrl, $label);
+        return $this->renderer->render($record, $safeUrl, $label, $eagerThumb);
     }
 }

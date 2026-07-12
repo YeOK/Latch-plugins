@@ -28,6 +28,11 @@ final class PreviewLimiter
         return self::$count < $max;
     }
 
+    public static function expansionCount(): int
+    {
+        return self::$count;
+    }
+
     public static function recordExpansion(): void
     {
         self::$count++;

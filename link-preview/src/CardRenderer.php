@@ -13,12 +13,15 @@ namespace Latch\Plugins\LinkPreview;
 
 final class CardRenderer
 {
+    private const THUMB_WIDTH = 160;
+    private const THUMB_HEIGHT = 120;
+
     public function __construct(
         private readonly Settings $settings,
     ) {
     }
 
-    public function render(?PreviewRecord $record, string $url, string $label): string
+    public function render(?PreviewRecord $record, string $url, string $label, bool $eagerThumb = false): string
     {
         if ($record === null) {
             return $this->fallbackLink($url, $label);
@@ -31,13 +34,14 @@ final class CardRenderer
             }
         }
 
-        return $this->renderCard($record);
+        return $this->renderCard($record, $eagerThumb);
     }
 
     private function renderEmbed(PreviewRecord $record): ?string
     {
         if ($record->kind === VideoUrl::KIND_YOUTUBE) {
             return $this->renderEmbedPlaceholder(
+                $record,
                 'youtube',
                 'https://www.youtube-nocookie.com/embed/' . rawurlencode($record->videoId ?? ''),
                 $record->displayTitle(),
@@ -46,6 +50,7 @@ final class CardRenderer
 
         if ($record->kind === VideoUrl::KIND_VIMEO) {
             return $this->renderEmbedPlaceholder(
+                $record,
                 'vimeo',
                 'https://player.vimeo.com/video/' . rawurlencode($record->videoId ?? ''),
                 $record->displayTitle(),
@@ -56,23 +61,32 @@ final class CardRenderer
     }
 
     /**
-     * Placeholder only — embed.js mounts the iframe client-side (keeps plugin-audit clean).
+     * Placeholder only — embed.js mounts the iframe on play (keeps plugin-audit clean).
      */
-    private function renderEmbedPlaceholder(string $kind, string $src, string $title): string
+    private function renderEmbedPlaceholder(PreviewRecord $record, string $kind, string $src, string $title): string
     {
         $safeSrc = htmlspecialchars($src, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeTitle = htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $posterAttr = '';
+        $imageSrc = $this->imageSrc($record);
+        if ($imageSrc !== null) {
+            $posterAttr = ' data-embed-poster="' . htmlspecialchars($imageSrc, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '"';
+        }
 
         return '<div class="link-embed link-embed--' . htmlspecialchars($kind, ENT_QUOTES, 'UTF-8') . '"'
             . ' data-embed-src="' . $safeSrc . '"'
             . ' data-embed-title="' . $safeTitle . '"'
+            . $posterAttr
             . ' role="region" aria-label="' . $safeTitle . '">'
-            . '<a class="link-embed-fallback muted" href="' . $safeSrc . '" rel="nofollow ugc" target="_blank">'
-            . 'Open video</a>'
+            . '<button type="button" class="link-embed-play" aria-label="Play ' . $safeTitle . '">'
+            . '<span class="link-embed-play-icon" aria-hidden="true"></span>'
+            . '</button>'
+            . '<noscript><a class="link-embed-noscript muted" href="' . $safeSrc . '" rel="nofollow ugc" target="_blank">'
+            . 'Open video</a></noscript>'
             . '</div>';
     }
 
-    private function renderCard(PreviewRecord $record): string
+    private function renderCard(PreviewRecord $record, bool $eagerThumb): string
     {
         $safeUrl = htmlspecialchars($record->url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $title = htmlspecialchars($record->displayTitle(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -82,8 +96,15 @@ final class CardRenderer
         $imageSrc = $this->imageSrc($record);
         if ($imageSrc !== null) {
             $safeImg = htmlspecialchars($imageSrc, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $imgAttrs = 'decoding="async" width="' . self::THUMB_WIDTH . '" height="' . self::THUMB_HEIGHT . '"';
+            if ($eagerThumb) {
+                $imgAttrs .= ' fetchpriority="high"';
+            } else {
+                $imgAttrs .= ' loading="lazy"';
+            }
+
             $thumb = '<div class="link-onebox__thumb-wrap">'
-                . '<img class="link-onebox__thumb" src="' . $safeImg . '" alt="" loading="lazy" decoding="async">'
+                . '<img class="link-onebox__thumb" src="' . $safeImg . '" alt="" ' . $imgAttrs . '>'
                 . '</div>';
         }
 
@@ -110,11 +131,6 @@ final class CardRenderer
     {
         if ($record->imageUrl === null || $record->imageUrl === '') {
             return null;
-        }
-
-        $host = SafeUrl::host($record->imageUrl);
-        if ($host === 'i.ytimg.com' || $host === 'i.vimeocdn.com') {
-            return $record->imageUrl;
         }
 
         return '/plugin/link-preview/image/' . $record->urlHash;

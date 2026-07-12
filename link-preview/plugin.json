@@ -6,7 +6,7 @@
     "description": "Rich link cards and optional video embeds for standalone URLs in posts.",
     "hooks": [
         "route.register",
-        "theme.assets",
+        "layout.head",
         "theme.scripts",
         "post.format.link",
         "post.format.after",
