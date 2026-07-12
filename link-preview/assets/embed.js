@@ -62,7 +62,7 @@
             }
 
             btn.addEventListener('click', function () {
-                mountEmbed(el, true);
+                mountEmbed(btn.closest('.link-embed'), true);
             });
         }
     }
