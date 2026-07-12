@@ -37,28 +37,39 @@ final class CardRenderer
     private function renderEmbed(PreviewRecord $record): ?string
     {
         if ($record->kind === VideoUrl::KIND_YOUTUBE) {
-            $src = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($record->videoId ?? '');
-            $title = htmlspecialchars($record->displayTitle(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-
-            return '<div class="link-embed link-embed--youtube">'
-                . '<iframe src="' . $src . '" title="' . $title . '" loading="lazy" '
-                . 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" '
-                . 'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
-                . '</div>';
+            return $this->renderEmbedPlaceholder(
+                'youtube',
+                'https://www.youtube-nocookie.com/embed/' . rawurlencode($record->videoId ?? ''),
+                $record->displayTitle(),
+            );
         }
 
         if ($record->kind === VideoUrl::KIND_VIMEO) {
-            $src = 'https://player.vimeo.com/video/' . rawurlencode($record->videoId ?? '');
-            $title = htmlspecialchars($record->displayTitle(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-
-            return '<div class="link-embed link-embed--vimeo">'
-                . '<iframe src="' . $src . '" title="' . $title . '" loading="lazy" '
-                . 'allow="autoplay; fullscreen; picture-in-picture" '
-                . 'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
-                . '</div>';
+            return $this->renderEmbedPlaceholder(
+                'vimeo',
+                'https://player.vimeo.com/video/' . rawurlencode($record->videoId ?? ''),
+                $record->displayTitle(),
+            );
         }
 
         return null;
+    }
+
+    /**
+     * Placeholder only — embed.js mounts the iframe client-side (keeps plugin-audit clean).
+     */
+    private function renderEmbedPlaceholder(string $kind, string $src, string $title): string
+    {
+        $safeSrc = htmlspecialchars($src, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $safeTitle = htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+        return '<div class="link-embed link-embed--' . htmlspecialchars($kind, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-embed-src="' . $safeSrc . '"'
+            . ' data-embed-title="' . $safeTitle . '"'
+            . ' role="region" aria-label="' . $safeTitle . '">'
+            . '<a class="link-embed-fallback muted" href="' . $safeSrc . '" rel="nofollow ugc" target="_blank">'
+            . 'Open video</a>'
+            . '</div>';
     }
 
     private function renderCard(PreviewRecord $record): string

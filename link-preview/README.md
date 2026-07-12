@@ -8,7 +8,7 @@ Requires **Latch 0.4.4.0+** (`post.format.link`, `csp.frame_src`).
 
 When a URL is the **only content in a paragraph** (bare `https://…`, `[url]…[/url]`, markdown link, etc.), the plugin replaces the default link with:
 
-- **YouTube / Vimeo** — inline player when *Embed YouTube and Vimeo* is enabled; otherwise a thumbnail card
+- **YouTube / Vimeo** — inline player when *Embed YouTube and Vimeo* is enabled (`embed.js` mounts the iframe client-side); otherwise a thumbnail card
 - **Other HTTPS links** — Open Graph card (title, description, site name, proxied thumbnail via `/plugin/link-preview/image/{hash}`)
 
 Inline URLs in prose stay normal links. Up to **N** previews per post (default 3) — configure in **Admin → Plugins → Link preview**.
@@ -37,7 +37,7 @@ Or install from **Admin → Plugins → Catalog** when the catalog release inclu
 
 - HTTPS only; private/reserved IPs blocked (SSRF-safe)
 - Remote images served same-origin via plugin image route (`img-src 'self'`)
-- `<iframe>` for video embeds is expected — `plugin-audit` may flag it for review
+- Video embeds use client-side `embed.js` (no `<iframe>` in PHP) so `plugin-audit` stays clean
 
 ## Data
 

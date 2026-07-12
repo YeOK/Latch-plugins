@@ -1,12 +1,13 @@
 {
     "name": "Link preview",
     "slug": "link-preview",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "min_latch_version": "0.4.4",
     "description": "Rich link cards and optional video embeds for standalone URLs in posts.",
     "hooks": [
         "route.register",
         "theme.assets",
+        "theme.scripts",
         "post.format.link",
         "post.format.after",
         "csp.img_src",

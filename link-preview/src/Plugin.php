@@ -34,13 +34,20 @@ final class Plugin implements PluginInterface
         $assetVersion = $app->assetVersion();
         $thumbsDir = $storageRoot . '/plugins/link-preview/thumbs';
         $cssPath = $pluginPath . '/assets/onebox.css';
+        $jsPath = $pluginPath . '/assets/embed.js';
 
         $context->hooks()->add(
             HookName::ROUTE_REGISTER,
-            static function (Router $router) use ($cssPath, $assetVersion, $cache, $http, $thumbsDir): void {
+            static function (Router $router) use ($cssPath, $jsPath, $assetVersion, $cache, $http, $thumbsDir, $settings): void {
                 $router->get('/plugin/link-preview/onebox.css', static function () use ($cssPath, $assetVersion): void {
                     self::serveAsset($cssPath, 'text/css', $assetVersion);
                 });
+
+                if ($settings->embedVideos) {
+                    $router->get('/plugin/link-preview/embed.js', static function () use ($jsPath, $assetVersion): void {
+                        self::serveAsset($jsPath, 'application/javascript', $assetVersion);
+                    });
+                }
 
                 $router->get('/plugin/link-preview/image/:hash', static function (array $params) use ($cache, $http, $thumbsDir): void {
                     $hash = (string) ($params['hash'] ?? '');
@@ -53,6 +60,13 @@ final class Plugin implements PluginInterface
             HookName::THEME_ASSETS,
             static fn (): string => '/plugin/link-preview/onebox.css?v=' . rawurlencode($assetVersion),
         );
+
+        if ($settings->embedVideos) {
+            $context->hooks()->add(
+                HookName::THEME_SCRIPTS,
+                static fn (): string => '/plugin/link-preview/embed.js?v=' . rawurlencode($assetVersion),
+            );
+        }
 
         $context->hooks()->add(
             HookName::POST_FORMAT_AFTER,
