@@ -1,0 +1,25 @@
+.latch-git-release {
+    margin: 1.25rem 0 0;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+}
+
+.latch-git-release-title {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+}
+
+.latch-git-release-name {
+    margin: 0 0 0.35rem;
+}
+
+.latch-git-release-meta {
+    margin: 0 0 0.65rem;
+    font-size: 0.85rem;
+}
+
+.latch-git-release-actions {
+    margin: 0;
+}

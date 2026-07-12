@@ -1,0 +1,48 @@
+{
+    "name": "Git release widget",
+    "slug": "git-release",
+    "version": "1.0.0",
+    "min_latch_version": "0.4.1",
+    "description": "Latest GitHub release card on the home page via client-mode guest cache (JSON hydrate).",
+    "hooks": [
+        "home.after_boards",
+        "route.register",
+        "theme.assets"
+    ],
+    "cache": {
+        "guest_page": "client",
+        "invalidate_on": [
+            "plugin"
+        ],
+        "client": "/plugin/git-release/widget.json"
+    },
+    "settings_schema": [
+        {
+            "key": "github_repo",
+            "type": "string",
+            "label": "GitHub repository",
+            "description": "owner/repo for release lookup (public API).",
+            "default": "YeOK/Latch"
+        },
+        {
+            "key": "heading",
+            "type": "string",
+            "label": "Card heading",
+            "default": "Latest release"
+        },
+        {
+            "key": "max_age_seconds",
+            "type": "integer",
+            "label": "Widget cache (seconds)",
+            "description": "Browser cache for widget.json responses.",
+            "default": 300
+        }
+    ],
+    "permissions": {
+        "filesystem": [],
+        "network": [
+            "api.github.com"
+        ],
+        "config": []
+    }
+}

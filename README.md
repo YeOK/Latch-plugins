@@ -8,12 +8,14 @@ Official distributable plugins for [Latch](https://github.com/YeOK/Latch) — in
 
 | Plugin | Version | Summary |
 |--------|---------|---------|
-| [forum-stats](forum-stats/) | 1.0.0 | Home page totals — posts, topics, members |
+| [forum-stats](forum-stats/) | 1.0.1 | Home page totals — fragment guest cache |
 | [image-upload](image-upload/) | 1.1.0 | Cloudflare R2 presigned PUT + compose **Image** button + post lightbox |
 | [word-filter](word-filter/) | 1.0.0 | Block or mask profanity on `post.before_save` |
 | [spam-bridge](spam-bridge/) | 1.0.2 | Akismet + Stop Forum Spam; `spam_log` in plugin SQLite |
 | [slack-notify](slack-notify/) | 1.0.0 | Slack/Discord incoming webhook on posts and registrations |
 | [link-preview](link-preview/) | 1.0.1 | Onebox link cards + lazy YouTube/Vimeo embeds for standalone URLs |
+
+**Operator plugins** (install from directory; not in catalog): [git-release](git-release/) — GitHub release widget with client-mode guest cache.
 
 Machine-readable index: [`catalog.json`](catalog.json).
 

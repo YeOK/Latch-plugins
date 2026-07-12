@@ -48,6 +48,7 @@ Admin **Catalog** install downloads `{slug}-{version}.zip` from the GitHub Relea
 ## Adding a new plugin
 
 1. Add plugin directory with `plugin.json`.
-2. Add entry to `catalog.json` `plugins` array.
-3. `build-zips.sh` reads slugs from `catalog.json` automatically — no hardcoded list to edit.
-4. Full publish + verify: `./scripts/publish-release.sh vX.Y.Z`
+2. Add entry to `catalog.json` `plugins` array (skip for operator-only plugins like `git-release`).
+3. Set `cache` in `plugin.json` — `bake`, `fragment`, `client`, or `bypass`; run `plugin-audit`.
+4. `build-zips.sh` reads slugs from `catalog.json` automatically.
+5. Full publish + verify: `./scripts/publish-release.sh vX.Y.Z`

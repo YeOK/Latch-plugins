@@ -1,7 +1,7 @@
 {
     "name": "Forum stats",
     "slug": "forum-stats",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "min_latch_version": "0.3.0",
     "description": "Public forum totals on the home page \u2014 posts, topics, and registered members.",
     "hooks": [
@@ -10,9 +10,11 @@
         "theme.assets"
     ],
     "cache": {
-        "guest_page": "bake",
+        "guest_page": "fragment",
+        "fragment": "home.after_boards",
         "invalidate_on": [
-            "site"
+            "site",
+            "plugin"
         ]
     },
     "permissions": {
