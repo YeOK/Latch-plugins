@@ -13,11 +13,70 @@
     pointer-events: none;
 }
 
-.post-content img.post-image {
-    display: block;
-    max-width: 100%;
-    height: auto;
+.post-image-figure {
     margin: 0.75rem 0;
+    max-width: 100%;
+}
+
+.post-image-open {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: zoom-in;
+    max-width: 100%;
+    text-align: left;
+}
+
+.post-image-open:focus-visible {
+    outline: 2px solid var(--accent, #0969da);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm, 6px);
+}
+
+.post-content img.post-image,
+.post-image--preview {
+    display: block;
+    max-width: min(100%, 42rem);
+    max-height: 28rem;
+    width: auto;
+    height: auto;
+    margin: 0;
+    object-fit: contain;
     border-radius: var(--radius-sm, 6px);
     border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
+}
+
+.post-image-noscript {
+    display: inline-block;
+    margin-top: 0.35rem;
+    font-size: 0.8125rem;
+}
+
+body.post-image-lightbox-open {
+    overflow: hidden;
+}
+
+.post-image-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.88);
+    cursor: zoom-out;
+}
+
+.post-image-lightbox__img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: var(--radius-sm, 6px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    cursor: default;
 }

@@ -9,6 +9,7 @@
         "theme.assets",
         "theme.scripts",
         "editor.compose",
+        "post.format.after",
         "post.format.image_host",
         "csp.img_src",
         "csp.connect_src",

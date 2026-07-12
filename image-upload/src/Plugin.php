@@ -56,6 +56,10 @@ final class Plugin implements PluginInterface
                 $router->get('/plugin/image-upload/upload.css', static function () use ($pluginPath, $assetVersion): void {
                     self::serveAsset($pluginPath . '/assets/upload.css', 'text/css', $assetVersion);
                 });
+
+                $router->get('/plugin/image-upload/viewer.js', static function () use ($pluginPath, $assetVersion): void {
+                    self::serveAsset($pluginPath . '/assets/viewer.js', 'application/javascript', $assetVersion);
+                });
             },
         );
 
@@ -67,6 +71,18 @@ final class Plugin implements PluginInterface
         $context->hooks()->add(
             HookName::THEME_SCRIPTS,
             static fn (): string => '/plugin/image-upload/upload.js?v=' . rawurlencode($assetVersion),
+        );
+
+        $context->hooks()->add(
+            HookName::THEME_SCRIPTS,
+            static fn (): string => '/plugin/image-upload/viewer.js?v=' . rawurlencode($assetVersion),
+        );
+
+        $formatter = new PostImageFormatter($config);
+        $context->hooks()->add(
+            HookName::POST_FORMAT_AFTER,
+            static fn (string $html, string $raw): string => $formatter->format($html),
+            15,
         );
 
         $context->hooks()->add(
