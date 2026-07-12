@@ -50,12 +50,14 @@ php bin/latch plugin install ./latch-plugins-1.0.3.zip
 
 ## Build release zips (maintainers)
 
+See **[docs/RELEASE.md](docs/RELEASE.md)** for the full checklist.
+
 ```bash
-./scripts/build-zips.sh v1.0.3
-./scripts/publish-release.sh v1.0.3   # build + upload all zips to GitHub
+./scripts/publish-release.sh v1.0.3   # build, upload, verify (use this for releases)
+./scripts/check-release.sh            # audit local + GitHub assets anytime
 ```
 
-Writes per-plugin zips (`{slug}-{version}.zip`) and a bundle to `releases/`. **Every** per-plugin zip must be attached to the GitHub Release — admin catalog install downloads `{slug}-{version}.zip` from that tag. The `release` field in `catalog.json` must match the tag; each plugin `version` must match its zip filename.
+`publish-release.sh` builds every `{slug}-{version}.zip` from `catalog.json`, uploads them all to the GitHub Release, then **fails** if any asset is missing. Admin catalog install requires every per-plugin zip on the release tag — not just the bundle.
 
 ## Not in this catalog
 

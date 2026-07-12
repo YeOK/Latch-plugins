@@ -9,7 +9,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TAG="${1:-v1.0.0}"
 OUT="${ROOT}/releases"
-BUNDLE_SLUGS=(forum-stats image-upload word-filter spam-bridge slack-notify link-preview)
+
+mapfile -t BUNDLE_SLUGS < <(php -r '
+$catalog = json_decode(file_get_contents($argv[1]), true);
+foreach ($catalog["plugins"] as $entry) {
+    echo $entry["slug"] . "\n";
+}
+' "${ROOT}/catalog.json")
 
 mkdir -p "${OUT}"
 rm -f "${OUT}"/*.zip
@@ -56,4 +62,4 @@ done
 (cd "${bundle_stage}" && zip -qr "${OUT}/${bundle_name}" .)
 rm -rf "${bundle_stage}"
 echo "Wrote ${OUT}/${bundle_name}"
-echo "Attach ${OUT}/*.zip to GitHub Release ${TAG}"
+echo "Next: ./scripts/publish-release.sh ${TAG}   (upload + verify all assets)"

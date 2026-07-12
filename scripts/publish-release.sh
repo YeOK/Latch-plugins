@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build all catalog zips and attach them to an existing GitHub Release tag.
+# Build all catalog zips, upload to GitHub, and verify every asset is present.
 #
 # Usage: ./scripts/publish-release.sh v1.0.3
 #
@@ -17,15 +17,20 @@ fi
 TAG="${TAG#v}"
 TAG="v${TAG}"
 
-CATALOG_RELEASE="$(php -r 'echo json_decode(file_get_contents($argv[1]), true)["release"];' "${ROOT}/catalog.json")"
-if [[ "${CATALOG_RELEASE}" != "${TAG}" ]]; then
-    echo "Error: catalog.json release is ${CATALOG_RELEASE}, expected ${TAG}" >&2
-    exit 1
-fi
+echo "==> Pre-flight: catalog.json release + plugin.json versions"
+php -r '
+$root = $argv[1];
+$tag = $argv[2];
+$catalog = json_decode(file_get_contents($root . "/catalog.json"), true);
+if (($catalog["release"] ?? "") !== $tag) {
+    fwrite(STDERR, "Error: catalog.json release must be {$tag} before publish\n");
+    exit(1);
+}
+' "${ROOT}" "${TAG}"
 
 if ! gh release view "${TAG}" --repo YeOK/Latch-plugins >/dev/null 2>&1; then
     echo "Error: GitHub release ${TAG} not found. Create it first:" >&2
-    echo "  gh release create ${TAG} --repo YeOK/Latch-plugins --title \"Latch-plugins ${TAG}\" --notes \"...\"" >&2
+    echo "  gh release create ${TAG} --repo YeOK/Latch-plugins --title \"Latch-plugins ${TAG}\" --notes-file docs/RELEASE.md" >&2
     exit 1
 fi
 
@@ -36,5 +41,7 @@ gh release upload "${TAG}" "${ROOT}/releases"/*.zip \
     --repo YeOK/Latch-plugins \
     --clobber
 
-echo "==> Assets on ${TAG}:"
-gh release view "${TAG}" --repo YeOK/Latch-plugins --json assets --jq '.assets[].name'
+echo "==> Verify local + GitHub assets"
+"${ROOT}/scripts/check-release.sh" "${TAG}"
+
+echo "Publish complete: ${TAG}"
