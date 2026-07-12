@@ -9,7 +9,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TAG="${1:-v1.0.0}"
 OUT="${ROOT}/releases"
-BUNDLE_SLUGS=(forum-stats image-upload word-filter spam-bridge slack-notify)
+BUNDLE_SLUGS=(forum-stats image-upload word-filter spam-bridge slack-notify link-preview)
 
 mkdir -p "${OUT}"
 rm -f "${OUT}"/*.zip

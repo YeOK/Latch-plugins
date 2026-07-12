@@ -1,7 +1,7 @@
 {
     "name": "Latch plugin catalog",
     "latch_min_version": "0.4.0",
-    "release": "v1.0.1",
+    "release": "v1.0.2",
     "plugins": [
         {
             "slug": "forum-stats",
@@ -43,6 +43,15 @@
             "min_latch_version": "0.4.0",
             "summary": "Post forum activity to a Slack or Discord incoming webhook.",
             "hooks": ["post.after_save", "user.register"]
+        },
+        {
+            "slug": "link-preview",
+            "name": "Link preview",
+            "version": "1.0.0",
+            "min_latch_version": "0.4.4",
+            "summary": "Rich link cards and optional YouTube/Vimeo embeds for standalone post URLs.",
+            "hooks": ["route.register", "theme.assets", "post.format.link", "post.format.after", "csp.img_src", "csp.frame_src", "post.delete"],
+            "database": true
         }
     ]
 }
