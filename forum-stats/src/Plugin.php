@@ -23,6 +23,7 @@ final class Plugin implements PluginInterface
     {
         $cssPath = $context->path() . '/assets/stats.css';
         $assetVersion = $context->app()->assetVersion();
+        $pluginVersion = $context->manifest()->version;
 
         $context->hooks()->add(
             HookName::ROUTE_REGISTER,
@@ -53,13 +54,8 @@ final class Plugin implements PluginInterface
         );
 
         $context->hooks()->add(
-            HookName::THEME_ASSETS,
-            static fn (): string => '/plugin/forum-stats/stats.css?v=' . rawurlencode($assetVersion),
-        );
-
-        $context->hooks()->add(
             HookName::HOME_AFTER_BOARDS,
-            static function () use ($context): string {
+            static function () use ($context, $assetVersion, $pluginVersion): string {
                 $app = $context->app();
                 if ($app->request()->path() !== '/') {
                     return '';
@@ -69,7 +65,7 @@ final class Plugin implements PluginInterface
                 $topics = $app->topics()->countAll();
                 $members = $app->users()->countAll();
 
-                return (new StatsPanel())->render($posts, $topics, $members);
+                return (new StatsPanel($assetVersion, $pluginVersion))->render($posts, $topics, $members);
             },
         );
     }

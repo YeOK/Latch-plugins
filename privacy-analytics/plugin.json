@@ -1,0 +1,76 @@
+{
+    "name": "Privacy analytics",
+    "slug": "privacy-analytics",
+    "version": "1.0.0",
+    "min_latch_version": "0.4.4",
+    "description": "Plausible or Matomo analytics snippet in the page head — no Google Analytics in core.",
+    "hooks": [
+        "layout.head",
+        "csp.script_src",
+        "csp.connect_src"
+    ],
+    "cache": {
+        "guest_page": "bake",
+        "invalidate_on": [
+            "plugin"
+        ]
+    },
+    "settings_schema": [
+        {
+            "key": "provider",
+            "type": "select",
+            "label": "Analytics provider",
+            "default": "plausible",
+            "options": [
+                {
+                    "value": "plausible",
+                    "label": "Plausible"
+                },
+                {
+                    "value": "matomo",
+                    "label": "Matomo"
+                }
+            ]
+        },
+        {
+            "key": "site_domain",
+            "type": "string",
+            "label": "Site domain",
+            "description": "Plausible: value for data-domain (e.g. latch.network). Ignored for Matomo.",
+            "default": ""
+        },
+        {
+            "key": "script_host",
+            "type": "string",
+            "label": "Plausible script host",
+            "description": "Hostname only — plausible.io or your self-hosted Plausible.",
+            "default": "plausible.io"
+        },
+        {
+            "key": "matomo_url",
+            "type": "string",
+            "label": "Matomo base URL",
+            "description": "HTTPS tracker root, e.g. https://analytics.example.com/ (trailing slash optional).",
+            "default": ""
+        },
+        {
+            "key": "matomo_site_id",
+            "type": "string",
+            "label": "Matomo site ID",
+            "description": "Numeric site id from your Matomo property.",
+            "default": ""
+        },
+        {
+            "key": "guests_only",
+            "type": "boolean",
+            "label": "Guests only",
+            "description": "Skip the snippet for signed-in members (recommended for privacy).",
+            "default": true
+        }
+    ],
+    "permissions": {
+        "filesystem": [],
+        "network": [],
+        "config": []
+    }
+}

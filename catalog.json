@@ -1,15 +1,15 @@
 {
     "name": "Latch plugin catalog",
     "latch_min_version": "0.4.0",
-    "release": "v1.0.6",
+    "release": "v1.0.7",
     "plugins": [
         {
             "slug": "forum-stats",
             "name": "Forum stats",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "min_latch_version": "0.3.0",
-            "summary": "Public forum totals on the home page — posts, topics, and registered members (fragment guest cache).",
-            "hooks": ["home.after_boards", "route.register", "theme.assets"]
+            "summary": "Public forum totals card on the home page — posts, topics, and registered members (fragment guest cache).",
+            "hooks": ["home.after_boards", "route.register"]
         },
         {
             "slug": "image-upload",
@@ -52,6 +52,14 @@
             "summary": "Rich link cards and optional YouTube/Vimeo embeds for standalone post URLs.",
             "hooks": ["route.register", "theme.assets", "theme.scripts", "post.format.link", "post.format.after", "csp.img_src", "csp.frame_src", "post.delete"],
             "database": true
+        },
+        {
+            "slug": "privacy-analytics",
+            "name": "Privacy analytics",
+            "version": "1.0.0",
+            "min_latch_version": "0.4.4",
+            "summary": "Plausible or Matomo analytics in the page head — privacy-friendly, no Google in core.",
+            "hooks": ["layout.head", "csp.script_src", "csp.connect_src"]
         }
     ]
 }

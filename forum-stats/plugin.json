@@ -1,13 +1,12 @@
 {
     "name": "Forum stats",
     "slug": "forum-stats",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "min_latch_version": "0.3.0",
-    "description": "Public forum totals on the home page \u2014 posts, topics, and registered members.",
+    "description": "Public forum totals card on the home page \u2014 posts, topics, and registered members.",
     "hooks": [
         "home.after_boards",
-        "route.register",
-        "theme.assets"
+        "route.register"
     ],
     "cache": {
         "guest_page": "fragment",

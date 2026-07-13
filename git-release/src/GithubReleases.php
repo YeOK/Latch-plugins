@@ -18,7 +18,15 @@ final class GithubReleases
     }
 
     /**
-     * @return array{tag: string, name: string, url: string, published: string}|null
+     * @return array{
+     *     tag: string,
+     *     name: string,
+     *     url: string,
+     *     published: string,
+     *     prerelease: bool,
+     *     body_excerpt: string,
+     *     repo_url: string
+     * }|null
      */
     public function latestRelease(string $ownerRepo): ?array
     {
@@ -51,12 +59,39 @@ final class GithubReleases
         }
 
         $published = trim((string) ($data['published_at'] ?? ''));
+        $body = trim((string) ($data['body'] ?? ''));
 
         return [
             'tag' => $tag,
             'name' => $name,
             'url' => $htmlUrl,
             'published' => $published,
+            'prerelease' => (bool) ($data['prerelease'] ?? false),
+            'body_excerpt' => $this->bodyExcerpt($body),
+            'repo_url' => 'https://github.com/' . $ownerRepo,
         ];
+    }
+
+    private function bodyExcerpt(string $body, int $max = 160): string
+    {
+        if ($body === '') {
+            return '';
+        }
+
+        $text = preg_replace('/```[\s\S]*?```/', ' ', $body) ?? $body;
+        $text = preg_replace('/`([^`]+)`/', '$1', $text) ?? $text;
+        $text = preg_replace('/\[([^\]]+)\]\([^)]+\)/', '$1', $text) ?? $text;
+        $text = preg_replace('/[#*_>~-]+/', '', $text) ?? $text;
+        $text = trim(preg_replace('/\s+/', ' ', $text) ?? '');
+
+        if ($text === '') {
+            return '';
+        }
+
+        if (mb_strlen($text) <= $max) {
+            return $text;
+        }
+
+        return rtrim(mb_substr($text, 0, $max - 1)) . '…';
     }
 }

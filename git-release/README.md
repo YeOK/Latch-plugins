@@ -1,6 +1,6 @@
 # git-release
 
-Operator plugin — shows the latest [GitHub release](https://docs.github.com/en/rest/releases) for a repository on the home page.
+Operator plugin — shows the latest [GitHub release](https://docs.github.com/en/rest/releases) for a repository on the home page in a styled release card (tag badge, stable/pre label, excerpt, repository link).
 
 Uses **client-mode** guest cache (`guest_page: client`): cached guest HTML contains only a placeholder; browsers fetch `/plugin/git-release/widget.json` for fresh release data without busting the whole site cache.
 

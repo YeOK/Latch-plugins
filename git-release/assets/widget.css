@@ -1,25 +1,314 @@
+/**
+ * git-release widget — self-contained card styling (light + dark via Latch tokens).
+ */
+
 .latch-git-release {
-    margin: 1.25rem 0 0;
-    padding: 1rem 1.1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface-raised);
+    --lgr-accent: var(--accent, #2f6fed);
+    --lgr-accent-hover: var(--accent-hover, #1f57c9);
+    --lgr-accent-soft: var(--accent-soft, #e8f0ff);
+    --lgr-surface: var(--surface, #fff);
+    --lgr-surface-raised: var(--surface-raised, #f8fafc);
+    --lgr-border: var(--border, #d8dee8);
+    --lgr-text: var(--text, #0f172a);
+    --lgr-muted: var(--muted, #64748b);
+    --lgr-radius: calc(var(--radius, 10px) + 2px);
+    --lgr-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 12px 32px rgba(15, 23, 42, 0.08);
+
+    position: relative;
+    margin: 1.25rem 0 1.5rem;
+    border: 1px solid color-mix(in srgb, var(--lgr-accent) 18%, var(--lgr-border));
+    border-radius: var(--lgr-radius);
+    background:
+        radial-gradient(ellipse 120% 80% at 100% 0%, color-mix(in srgb, var(--lgr-accent) 14%, transparent), transparent 55%),
+        linear-gradient(165deg, color-mix(in srgb, var(--lgr-accent-soft) 55%, var(--lgr-surface)) 0%, var(--lgr-surface) 48%);
+    box-shadow: var(--lgr-shadow);
+    overflow: hidden;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
-.latch-git-release-title {
-    margin: 0 0 0.35rem;
-    font-size: 1rem;
+.latch-git-release:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--lgr-accent) 32%, var(--lgr-border));
+    box-shadow:
+        0 2px 4px rgba(15, 23, 42, 0.06),
+        0 18px 40px rgba(15, 23, 42, 0.12);
 }
 
-.latch-git-release-name {
-    margin: 0 0 0.35rem;
+.latch-git-release__accent {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: linear-gradient(
+        180deg,
+        var(--lgr-accent) 0%,
+        color-mix(in srgb, var(--lgr-accent) 70%, #ec4899) 55%,
+        color-mix(in srgb, var(--lgr-accent) 50%, #f59e0b) 100%
+    );
 }
 
-.latch-git-release-meta {
-    margin: 0 0 0.65rem;
-    font-size: 0.85rem;
+.latch-git-release__inner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem 1.25rem;
+    padding: 1.15rem 1.25rem 1.2rem 1.35rem;
 }
 
-.latch-git-release-actions {
+.latch-git-release__brand {
+    padding-top: 0.15rem;
+}
+
+.latch-git-release__icon {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: calc(var(--lgr-radius) - 2px);
+    background: color-mix(in srgb, var(--lgr-accent-soft) 80%, var(--lgr-surface));
+    border: 1px solid color-mix(in srgb, var(--lgr-accent) 22%, var(--lgr-border));
+    color: var(--lgr-accent-hover);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.latch-git-release__icon-svg {
+    display: block;
+}
+
+.latch-git-release__content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.latch-git-release__header {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.latch-git-release__eyebrow {
     margin: 0;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lgr-accent-hover);
+}
+
+.latch-git-release__heading {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--lgr-muted);
+}
+
+.latch-git-release__release {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.latch-git-release__title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.55rem 0.75rem;
+}
+
+.latch-git-release__title {
+    margin: 0;
+    font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--lgr-text);
+}
+
+.latch-git-release__tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--lgr-accent) 28%, var(--lgr-border));
+    background: color-mix(in srgb, var(--lgr-accent-soft) 65%, var(--lgr-surface-raised));
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--lgr-accent-hover);
+    white-space: nowrap;
+}
+
+.latch-git-release__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.65rem;
+    font-size: 0.84rem;
+    color: var(--lgr-muted);
+}
+
+.latch-git-release__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.latch-git-release__badge--stable {
+    background: color-mix(in srgb, #10b981 16%, var(--lgr-surface-raised));
+    color: color-mix(in srgb, #047857 85%, var(--lgr-text));
+    border: 1px solid color-mix(in srgb, #10b981 28%, var(--lgr-border));
+}
+
+.latch-git-release__badge--pre {
+    background: color-mix(in srgb, #f59e0b 18%, var(--lgr-surface-raised));
+    color: color-mix(in srgb, #b45309 85%, var(--lgr-text));
+    border: 1px solid color-mix(in srgb, #f59e0b 32%, var(--lgr-border));
+}
+
+.latch-git-release__date::before {
+    content: "·";
+    margin-right: 0.45rem;
+    color: color-mix(in srgb, var(--lgr-muted) 70%, transparent);
+}
+
+.latch-git-release__date:first-child::before {
+    content: none;
+    margin: 0;
+}
+
+.latch-git-release__repo {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.12rem 0.45rem;
+    border-radius: 999px;
+    background: var(--lgr-surface-raised);
+    border: 1px solid var(--lgr-border);
+    color: var(--lgr-text);
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.latch-git-release__repo:hover {
+    border-color: color-mix(in srgb, var(--lgr-accent) 35%, var(--lgr-border));
+    color: var(--lgr-accent-hover);
+    background: color-mix(in srgb, var(--lgr-accent-soft) 40%, var(--lgr-surface-raised));
+}
+
+.latch-git-release__repo::before {
+    content: "·";
+    margin-right: 0.45rem;
+    color: color-mix(in srgb, var(--lgr-muted) 70%, transparent);
+    font-weight: 400;
+}
+
+.latch-git-release__repo:first-child::before {
+    content: none;
+    margin: 0;
+}
+
+.latch-git-release__excerpt {
+    margin: 0;
+    max-width: 62ch;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--lgr-text) 82%, var(--lgr-muted));
+}
+
+.latch-git-release__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin: 0;
+}
+
+.latch-git-release__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.35rem;
+    padding-inline: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.latch-git-release__btn--primary {
+    background: var(--lgr-accent);
+    color: var(--accent-contrast, #fff);
+    border: 1px solid color-mix(in srgb, var(--lgr-accent) 80%, #000);
+}
+
+.latch-git-release__btn--primary:hover {
+    background: var(--lgr-accent-hover);
+    color: var(--accent-contrast, #fff);
+}
+
+.latch-git-release__btn--secondary {
+    background: color-mix(in srgb, var(--lgr-surface-raised) 80%, var(--lgr-surface));
+    color: var(--lgr-text);
+    border: 1px solid var(--lgr-border);
+}
+
+.latch-git-release__btn--secondary:hover {
+    border-color: color-mix(in srgb, var(--lgr-accent) 30%, var(--lgr-border));
+    color: var(--lgr-accent-hover);
+    background: color-mix(in srgb, var(--lgr-accent-soft) 35%, var(--lgr-surface-raised));
+}
+
+.latch-git-release__btn-icon {
+    flex-shrink: 0;
+    opacity: 0.92;
+    transition: transform 0.15s ease;
+}
+
+.latch-git-release__btn--primary:hover .latch-git-release__btn-icon {
+    transform: translate(1px, -1px);
+}
+
+@media (max-width: 560px) {
+    .latch-git-release__inner {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        padding: 1rem 1rem 1.05rem 1.1rem;
+    }
+
+    .latch-git-release__brand {
+        display: none;
+    }
+
+    .latch-git-release__actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .latch-git-release__btn {
+        justify-content: center;
+    }
+}
+
+[data-theme="dark"] .latch-git-release {
+    --lgr-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 14px 36px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .latch-git-release__icon {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .latch-git-release__btn--primary {
+    background: var(--btn-bg, var(--lgr-accent));
+    color: #fff;
+}
+
+[data-theme="dark"] .latch-git-release__btn--primary:hover {
+    background: var(--btn-bg-hover, var(--lgr-accent-hover));
+    color: #fff;
+}
+
+/* Hydrated client slot — padding avoids margin collapse before .board-panels */
+.plugin-client-slot.is-loaded:has(.latch-git-release) {
+    padding-bottom: 1.5rem;
 }

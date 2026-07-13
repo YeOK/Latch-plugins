@@ -1,6 +1,6 @@
 # Forum stats plugin
 
-Reference plugin for Latch — shows public forum totals on the **home page** (after the board list, before the site footer).
+Reference plugin for Latch — shows public forum totals in a **home page card** (after the board list, before the site footer). Styling is self-contained in `assets/stats.css` and injected with the widget HTML (same pattern as git-release).
 
 ## Stats shown
 

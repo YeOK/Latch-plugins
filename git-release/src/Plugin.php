@@ -24,15 +24,16 @@ final class Plugin implements PluginInterface
     {
         $pluginPath = $context->path();
         $assetVersion = $context->app()->assetVersion();
+        $pluginVersion = $context->manifest()->version;
         $storageRoot = (string) $context->app()->config()->get('paths.storage');
         $settingsStore = PluginSettingsStore::forPlugin($context->manifest(), $storageRoot);
 
         $context->hooks()->add(
             HookName::ROUTE_REGISTER,
-            static function (Router $router) use ($pluginPath, $settingsStore, $assetVersion): void {
-                $router->get('/plugin/git-release/widget.json', static function () use ($settingsStore): void {
+            static function (Router $router) use ($pluginPath, $settingsStore, $assetVersion, $pluginVersion): void {
+                $router->get('/plugin/git-release/widget.json', static function () use ($settingsStore, $assetVersion, $pluginVersion): void {
                     $settings = Settings::fromStored($settingsStore->all());
-                    $html = (new ReleaseWidget())->renderHtml($settings);
+                    $html = (new ReleaseWidget($assetVersion, $pluginVersion))->renderHtml($settings);
                     Response::json(['html' => $html], 200, $settings->maxAgeSeconds);
                 });
 
@@ -62,11 +63,8 @@ final class Plugin implements PluginInterface
             },
         );
 
-        $context->hooks()->add(
-            HookName::THEME_ASSETS,
-            static fn (): string => '/plugin/git-release/widget.css?v=' . rawurlencode($assetVersion),
-        );
-
+        // CSS is injected with widget HTML (client-mode plugins cannot use theme.assets until core
+        // skips client placeholders for asset hooks — see PluginCacheCoordinator).
         // home.before_boards is listed for placement; client cache mode serves a placeholder instead.
         $context->hooks()->add(
             HookName::HOME_BEFORE_BOARDS,
