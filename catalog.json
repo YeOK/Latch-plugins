@@ -56,7 +56,7 @@
         {
             "slug": "privacy-analytics",
             "name": "Privacy analytics",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "min_latch_version": "0.4.4",
             "summary": "Plausible or Matomo analytics in the page head — privacy-friendly, no Google in core.",
             "hooks": ["layout.head", "csp.script_src", "csp.connect_src"]

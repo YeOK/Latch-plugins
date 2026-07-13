@@ -13,6 +13,8 @@ namespace Latch\Plugins\PrivacyAnalytics;
 
 final class AnalyticsSnippet
 {
+    private const ASSETS_DIR = __DIR__ . '/../assets';
+
     public function __construct(private readonly Settings $settings)
     {
     }
@@ -42,12 +44,11 @@ final class AnalyticsSnippet
 
     private function renderPlausible(string $cspNonce): string
     {
-        $host = $this->escape($this->settings->scriptHost);
-        $domain = $this->escape($this->settings->siteDomain);
-        $nonce = $this->escape($cspNonce);
-
-        return '<script defer src="https://' . $host . '/js/script.js" '
-            . 'data-domain="' . $domain . '" nonce="' . $nonce . '"></script>';
+        return $this->renderTemplate('plausible-snippet.html', [
+            'SCRIPT_HOST' => $this->settings->scriptHost,
+            'SITE_DOMAIN' => $this->settings->siteDomain,
+            'NONCE' => $cspNonce,
+        ]);
     }
 
     private function renderMatomo(string $cspNonce): string
@@ -57,19 +58,30 @@ final class AnalyticsSnippet
             return '';
         }
 
-        $trackerPhp = $this->escape($base . 'matomo.php');
-        $scriptSrc = $this->escape($base . 'matomo.js');
-        $siteId = $this->escape($this->settings->matomoSiteId);
-        $nonce = $this->escape($cspNonce);
+        return $this->renderTemplate('matomo-snippet.html', [
+            'NONCE' => $cspNonce,
+            'TRACKER_URL' => $base . 'matomo.php',
+            'SCRIPT_SRC' => $base . 'matomo.js',
+            'SITE_ID' => $this->settings->matomoSiteId,
+        ]);
+    }
 
-        return '<script nonce="' . $nonce . '">'
-            . 'var _paq=window._paq=window._paq||[];'
-            . '_paq.push(["trackPageView"]);'
-            . '_paq.push(["enableLinkTracking"]);'
-            . '_paq.push(["setTrackerUrl","' . $trackerPhp . '"]);'
-            . '_paq.push(["setSiteId","' . $siteId . '"]);'
-            . '</script>'
-            . '<script defer src="' . $scriptSrc . '" nonce="' . $nonce . '"></script>';
+    /**
+     * @param array<string, string> $vars
+     */
+    private function renderTemplate(string $filename, array $vars): string
+    {
+        $path = self::ASSETS_DIR . '/' . $filename;
+        $template = file_get_contents($path);
+        if (!is_string($template) || $template === '') {
+            return '';
+        }
+
+        foreach ($vars as $key => $value) {
+            $template = str_replace('{{' . $key . '}}', $this->escape($value), $template);
+        }
+
+        return $template;
     }
 
     private function escape(string $value): string

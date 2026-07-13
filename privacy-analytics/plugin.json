@@ -1,7 +1,7 @@
 {
     "name": "Privacy analytics",
     "slug": "privacy-analytics",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "min_latch_version": "0.4.4",
     "description": "Plausible or Matomo analytics snippet in the page head — no Google Analytics in core.",
     "hooks": [
