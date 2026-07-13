@@ -82,8 +82,6 @@ final class Plugin implements PluginInterface
             },
         );
 
-        // CSS is injected with widget HTML (client-mode plugins cannot use theme.assets until core
-        // skips client placeholders for asset hooks — see PluginCacheCoordinator).
         // home.before_boards is listed for placement; client cache mode serves a placeholder instead.
         $context->hooks()->add(
             HookName::HOME_BEFORE_BOARDS,

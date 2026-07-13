@@ -1,7 +1,7 @@
 {
     "name": "Git release widget",
     "slug": "git-release",
-    "version": "1.1.7",
+    "version": "1.1.9",
     "min_latch_version": "0.4.6",
     "description": "Latest GitHub release card on the home page via client-mode guest cache (JSON hydrate).",
     "hooks": [
@@ -62,7 +62,9 @@
         }
     ],
     "permissions": {
-        "filesystem": [],
+        "filesystem": [
+            "storage/plugins/git-release"
+        ],
         "network": [
             "api.github.com"
         ],
