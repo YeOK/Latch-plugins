@@ -26,7 +26,6 @@ final class Plugin implements PluginInterface
         $pluginPath = $context->path();
         $app = $context->app();
         $assetVersion = $app->assetVersion();
-        $pluginVersion = $context->manifest()->version;
         $storageRoot = (string) $app->config()->get('paths.storage');
         $settingsStore = PluginSettingsStore::forPlugin($context->manifest(), $storageRoot);
 
@@ -38,13 +37,12 @@ final class Plugin implements PluginInterface
                 $pluginPath,
                 $settingsStore,
                 $assetVersion,
-                $pluginVersion,
                 $cacheDir,
             ): void {
-                $router->get('/plugin/git-release/widget.json', static function () use ($settingsStore, $assetVersion, $pluginVersion, $cacheDir): void {
+                $router->get('/plugin/git-release/widget.json', static function () use ($settingsStore, $cacheDir): void {
                     $settings = Settings::fromStored($settingsStore->all());
                     $github = new GithubReleases(cache: new ReleaseCache($cacheDir));
-                    $html = (new ReleaseWidget($assetVersion, $pluginVersion, $github))->renderHtml($settings);
+                    $html = (new ReleaseWidget($github))->renderHtml($settings);
                     Response::json(['html' => $html], 200, $settings->maxAgeSeconds);
                 });
 
@@ -62,6 +60,11 @@ final class Plugin implements PluginInterface
                     (new CachePurgeHandler($hookApp, $cacheDir))->handle();
                 });
             },
+        );
+
+        $context->hooks()->add(
+            HookName::THEME_ASSETS,
+            static fn (): string => '/plugin/git-release/widget.css?v=' . rawurlencode($assetVersion),
         );
 
         $context->hooks()->add(

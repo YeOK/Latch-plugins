@@ -14,8 +14,6 @@ namespace Latch\Plugins\GitRelease;
 final class ReleaseWidget
 {
     public function __construct(
-        private readonly string $assetVersion = '',
-        private readonly string $pluginVersion = '',
         private readonly GithubReleases $github = new GithubReleases(),
     ) {
     }
@@ -54,10 +52,8 @@ final class ReleaseWidget
         $githubIcon = $this->githubMarkSvg();
         $arrowIcon = $this->arrowIconSvg();
 
-        $stylesheet = $this->stylesheetTag();
-
         return <<<HTML
-{$stylesheet}<article class="latch-git-release" aria-label="{$heading}">
+<article class="latch-git-release" aria-label="{$heading}">
     <div class="latch-git-release__accent" aria-hidden="true"></div>
     <div class="latch-git-release__inner">
         <div class="latch-git-release__brand" aria-hidden="true">
@@ -112,14 +108,6 @@ HTML;
     private function escape(string $value): string
     {
         return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    }
-
-    private function stylesheetTag(): string
-    {
-        $parts = array_values(array_filter([$this->pluginVersion, $this->assetVersion], static fn (string $v): bool => $v !== ''));
-        $query = $parts !== [] ? '?v=' . rawurlencode(implode('.', $parts)) : '';
-
-        return '<link rel="stylesheet" href="/plugin/git-release/widget.css' . $query . '">';
     }
 
     private function githubMarkSvg(): string
