@@ -34,6 +34,8 @@ php bin/latch plugin enable git-release
 }
 ```
 
+Renders above the board list via `home.before_boards` (showcase and default home templates).
+
 Enable/disable busts `tagPlugin:git-release`. Core loads `plugin-clients.js` when any client-mode plugin is enabled.
 
 ## Requirements

@@ -5,7 +5,7 @@
     "min_latch_version": "0.4.1",
     "description": "Latest GitHub release card on the home page via client-mode guest cache (JSON hydrate).",
     "hooks": [
-        "home.after_boards",
+        "home.before_boards",
         "route.register",
         "theme.assets"
     ],

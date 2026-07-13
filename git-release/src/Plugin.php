@@ -67,9 +67,9 @@ final class Plugin implements PluginInterface
             static fn (): string => '/plugin/git-release/widget.css?v=' . rawurlencode($assetVersion),
         );
 
-        // home.after_boards is listed for placement; client cache mode serves a placeholder instead.
+        // home.before_boards is listed for placement; client cache mode serves a placeholder instead.
         $context->hooks()->add(
-            HookName::HOME_AFTER_BOARDS,
+            HookName::HOME_BEFORE_BOARDS,
             static fn (): string => '',
         );
     }
