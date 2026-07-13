@@ -1,12 +1,13 @@
 {
     "name": "Git release widget",
     "slug": "git-release",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "min_latch_version": "0.4.1",
     "description": "Latest GitHub release card on the home page via client-mode guest cache (JSON hydrate).",
     "hooks": [
         "home.before_boards",
-        "route.register"
+        "route.register",
+        "theme.scripts"
     ],
     "cache": {
         "guest_page": "client",
@@ -20,7 +21,7 @@
             "key": "github_repo",
             "type": "string",
             "label": "GitHub repository",
-            "description": "owner/repo for release lookup (public API).",
+            "description": "Public repository as owner/name (e.g. YeOK/Latch or your-org/your-project). Uses the GitHub REST API — no token required for public repos.",
             "default": "YeOK/Latch"
         },
         {
@@ -31,10 +32,32 @@
         },
         {
             "key": "max_age_seconds",
-            "type": "integer",
-            "label": "Widget cache (seconds)",
-            "description": "Browser cache for widget.json responses.",
-            "default": 300
+            "type": "select",
+            "label": "Release cache TTL",
+            "description": "How long to cache GitHub API responses server-side and browser cache for widget.json. Purge the release cache after changing the repository.",
+            "default": "300",
+            "options": [
+                {
+                    "value": "300",
+                    "label": "5 minutes"
+                },
+                {
+                    "value": "600",
+                    "label": "10 minutes"
+                },
+                {
+                    "value": "900",
+                    "label": "15 minutes"
+                },
+                {
+                    "value": "1800",
+                    "label": "30 minutes"
+                },
+                {
+                    "value": "3600",
+                    "label": "1 hour"
+                }
+            ]
         }
     ],
     "permissions": {

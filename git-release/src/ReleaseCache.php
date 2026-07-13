@@ -85,6 +85,41 @@ final class ReleaseCache
         @file_put_contents($this->pathFor($ownerRepo), $payload, LOCK_EX);
     }
 
+    public function purge(string $ownerRepo): bool
+    {
+        $path = $this->pathFor($ownerRepo);
+        if (!is_file($path)) {
+            return false;
+        }
+
+        return @unlink($path);
+    }
+
+    public function purgeAll(): int
+    {
+        if (!is_dir($this->directory)) {
+            return 0;
+        }
+
+        $removed = 0;
+        foreach (glob(rtrim($this->directory, '/') . '/*.json') ?: [] as $file) {
+            if (is_file($file) && @unlink($file)) {
+                $removed++;
+            }
+        }
+
+        return $removed;
+    }
+
+    public function entryCount(): int
+    {
+        if (!is_dir($this->directory)) {
+            return 0;
+        }
+
+        return count(glob(rtrim($this->directory, '/') . '/*.json') ?: []);
+    }
+
     /**
      * @return array{fetched_at: int, release: array<string, mixed>}|null
      */

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Latch\Plugins\GitRelease;
 
+use Latch\Core\Application;
 use Latch\Core\Plugins\HookName;
 use Latch\Core\Plugins\PluginContext;
 use Latch\Core\Plugins\PluginInterface;
@@ -23,16 +24,23 @@ final class Plugin implements PluginInterface
     public function register(PluginContext $context): void
     {
         $pluginPath = $context->path();
-        $assetVersion = $context->app()->assetVersion();
+        $app = $context->app();
+        $assetVersion = $app->assetVersion();
         $pluginVersion = $context->manifest()->version;
-        $storageRoot = (string) $context->app()->config()->get('paths.storage');
+        $storageRoot = (string) $app->config()->get('paths.storage');
         $settingsStore = PluginSettingsStore::forPlugin($context->manifest(), $storageRoot);
 
         $cacheDir = rtrim($storageRoot, '/') . '/plugins/git-release/cache';
 
         $context->hooks()->add(
             HookName::ROUTE_REGISTER,
-            static function (Router $router) use ($pluginPath, $settingsStore, $assetVersion, $pluginVersion, $cacheDir): void {
+            static function (Router $router, Application $hookApp) use (
+                $pluginPath,
+                $settingsStore,
+                $assetVersion,
+                $pluginVersion,
+                $cacheDir,
+            ): void {
                 $router->get('/plugin/git-release/widget.json', static function () use ($settingsStore, $assetVersion, $pluginVersion, $cacheDir): void {
                     $settings = Settings::fromStored($settingsStore->all());
                     $github = new GithubReleases(cache: new ReleaseCache($cacheDir));
@@ -42,27 +50,32 @@ final class Plugin implements PluginInterface
 
                 $cssPath = $pluginPath . '/assets/widget.css';
                 $router->get('/plugin/git-release/widget.css', static function () use ($cssPath, $assetVersion): void {
-                    if (!is_file($cssPath)) {
-                        Response::notFound();
-
-                        return;
-                    }
-
-                    $etag = '"' . hash('sha256', $cssPath . '|' . filemtime($cssPath) . '|' . $assetVersion) . '"';
-                    http_response_code(200);
-                    header('Content-Type: text/css; charset=utf-8');
-                    header('Cache-Control: public, max-age=31536000, immutable');
-                    header('ETag: ' . $etag);
-
-                    $ifNoneMatch = $_SERVER['HTTP_IF_NONE_MATCH'] ?? '';
-                    if (is_string($ifNoneMatch) && trim($ifNoneMatch) === $etag) {
-                        http_response_code(304);
-                        exit;
-                    }
-
-                    readfile($cssPath);
-                    exit;
+                    self::serveAsset($cssPath, 'text/css', $assetVersion);
                 });
+
+                $jsPath = $pluginPath . '/assets/admin-tools.js';
+                $router->get('/plugin/git-release/admin-tools.js', static function () use ($jsPath, $assetVersion): void {
+                    self::serveAsset($jsPath, 'application/javascript', $assetVersion);
+                });
+
+                $router->post('/admin/plugins/git-release/purge-cache', static function () use ($hookApp, $cacheDir): void {
+                    (new CachePurgeHandler($hookApp, $cacheDir))->handle();
+                });
+            },
+        );
+
+        $context->hooks()->add(
+            HookName::THEME_SCRIPTS,
+            static function (Application $hookApp) use ($assetVersion): string {
+                if (!$hookApp->auth()->isAdmin()) {
+                    return '';
+                }
+
+                if ($hookApp->request()->path() !== '/admin/plugins/git-release/settings') {
+                    return '';
+                }
+
+                return '/plugin/git-release/admin-tools.js?v=' . rawurlencode($assetVersion);
             },
         );
 
@@ -73,5 +86,29 @@ final class Plugin implements PluginInterface
             HookName::HOME_BEFORE_BOARDS,
             static fn (): string => '',
         );
+    }
+
+    private static function serveAsset(string $path, string $contentType, string $assetVersion): void
+    {
+        if (!is_file($path)) {
+            Response::notFound();
+
+            return;
+        }
+
+        $etag = '"' . hash('sha256', $path . '|' . filemtime($path) . '|' . $assetVersion) . '"';
+        http_response_code(200);
+        header('Content-Type: ' . $contentType . '; charset=utf-8');
+        header('Cache-Control: public, max-age=31536000, immutable');
+        header('ETag: ' . $etag);
+
+        $ifNoneMatch = $_SERVER['HTTP_IF_NONE_MATCH'] ?? '';
+        if (is_string($ifNoneMatch) && trim($ifNoneMatch) === $etag) {
+            http_response_code(304);
+            exit;
+        }
+
+        readfile($path);
+        exit;
     }
 }
