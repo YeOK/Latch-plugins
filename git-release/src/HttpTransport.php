@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Latch\Plugins\GitRelease;
 
-final class HttpTransport
+class HttpTransport
 {
     private const USER_AGENT = 'Latch-GitRelease/1.0 (+https://latch.network)';
 

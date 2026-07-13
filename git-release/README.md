@@ -22,7 +22,7 @@ php bin/latch plugin enable git-release
 |-----|---------|---------|
 | `github_repo` | `YeOK/Latch` | `owner/repo` for GitHub API |
 | `heading` | `Latest release` | Card title |
-| `max_age_seconds` | `300` | Browser cache TTL for `widget.json` |
+| `max_age_seconds` | `300` | Browser cache TTL for `widget.json` and server-side GitHub API cache |
 
 ## Cache
 
@@ -35,6 +35,8 @@ php bin/latch plugin enable git-release
 ```
 
 Renders above the board list via `home.before_boards` (showcase and default home templates).
+
+GitHub release data is cached under `storage/plugins/git-release/cache/` for the same TTL as `max_age_seconds`, so repeat `widget.json` requests avoid calling `api.github.com` on every home page visit. If GitHub is unreachable, the last cached release is served when available.
 
 Enable/disable busts `tagPlugin:git-release`. Core loads `plugin-clients.js` when any client-mode plugin is enabled.
 

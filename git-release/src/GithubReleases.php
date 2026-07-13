@@ -13,8 +13,10 @@ namespace Latch\Plugins\GitRelease;
 
 final class GithubReleases
 {
-    public function __construct(private readonly HttpTransport $http = new HttpTransport())
-    {
+    public function __construct(
+        private readonly HttpTransport $http = new HttpTransport(),
+        private readonly ?ReleaseCache $cache = null,
+    ) {
     }
 
     /**
@@ -28,12 +30,42 @@ final class GithubReleases
      *     repo_url: string
      * }|null
      */
-    public function latestRelease(string $ownerRepo): ?array
+    public function latestRelease(string $ownerRepo, int $cacheTtlSeconds = 300): ?array
     {
         if (!preg_match('#^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$#', $ownerRepo)) {
             return null;
         }
 
+        if ($this->cache !== null) {
+            $cached = $this->cache->getFresh($ownerRepo, $cacheTtlSeconds);
+            if ($cached !== null) {
+                return $cached;
+            }
+        }
+
+        $fetched = $this->fetchFromApi($ownerRepo);
+        if ($fetched !== null) {
+            $this->cache?->put($ownerRepo, $fetched);
+
+            return $fetched;
+        }
+
+        return $this->cache?->getStale($ownerRepo);
+    }
+
+    /**
+     * @return array{
+     *     tag: string,
+     *     name: string,
+     *     url: string,
+     *     published: string,
+     *     prerelease: bool,
+     *     body_excerpt: string,
+     *     repo_url: string
+     * }|null
+     */
+    private function fetchFromApi(string $ownerRepo): ?array
+    {
         $url = 'https://api.github.com/repos/' . $ownerRepo . '/releases/latest';
         $raw = $this->http->get($url);
         if ($raw === null) {

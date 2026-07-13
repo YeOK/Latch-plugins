@@ -26,7 +26,7 @@ final class ReleaseWidget
             return '';
         }
 
-        $release = $this->github->latestRelease($settings->githubRepo);
+        $release = $this->github->latestRelease($settings->githubRepo, $settings->maxAgeSeconds);
         if ($release === null) {
             return '';
         }

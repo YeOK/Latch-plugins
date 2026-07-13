@@ -28,12 +28,15 @@ final class Plugin implements PluginInterface
         $storageRoot = (string) $context->app()->config()->get('paths.storage');
         $settingsStore = PluginSettingsStore::forPlugin($context->manifest(), $storageRoot);
 
+        $cacheDir = rtrim($storageRoot, '/') . '/plugins/git-release/cache';
+
         $context->hooks()->add(
             HookName::ROUTE_REGISTER,
-            static function (Router $router) use ($pluginPath, $settingsStore, $assetVersion, $pluginVersion): void {
-                $router->get('/plugin/git-release/widget.json', static function () use ($settingsStore, $assetVersion, $pluginVersion): void {
+            static function (Router $router) use ($pluginPath, $settingsStore, $assetVersion, $pluginVersion, $cacheDir): void {
+                $router->get('/plugin/git-release/widget.json', static function () use ($settingsStore, $assetVersion, $pluginVersion, $cacheDir): void {
                     $settings = Settings::fromStored($settingsStore->all());
-                    $html = (new ReleaseWidget($assetVersion, $pluginVersion))->renderHtml($settings);
+                    $github = new GithubReleases(cache: new ReleaseCache($cacheDir));
+                    $html = (new ReleaseWidget($assetVersion, $pluginVersion, $github))->renderHtml($settings);
                     Response::json(['html' => $html], 200, $settings->maxAgeSeconds);
                 });
 
