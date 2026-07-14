@@ -49,7 +49,7 @@ final class ReleaseWidget
             ? '<p class="latch-git-release__excerpt">' . $this->escape($excerpt) . '</p>'
             : '';
 
-        $brandIcon = $this->brandMarkSvg($settings->githubRepo);
+        $brandIcon = $this->latchMarkSvg();
         $arrowIcon = $this->arrowIconSvg();
 
         return <<<HTML
@@ -110,40 +110,14 @@ HTML;
         return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
-    private function brandMarkSvg(string $githubRepo): string
-    {
-        if ($this->isLatchRepository($githubRepo)) {
-            return $this->latchMarkSvg();
-        }
-
-        return $this->githubMarkSvg();
-    }
-
-    private function isLatchRepository(string $githubRepo): bool
-    {
-        return strtolower(trim($githubRepo)) === 'yeok/latch';
-    }
-
     private function latchMarkSvg(): string
     {
         return <<<'SVG'
 <svg class="latch-git-release__icon-svg latch-git-release__icon-svg--app" width="52" height="52" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-    <rect width="32" height="32" rx="7" fill="#2f6fed" />
+    <rect width="32" height="32" rx="7" fill="var(--accent, #2f6fed)" />
     <g fill="#ffffff" transform="translate(16 16) scale(0.5) translate(-46 -40)">
         <path d="M35 15 C24 15 15 24 15 35 C15 46 24 55 35 55 L50 55 L50 43 L35 43 C31 43 27 39 27 35 C27 31 31 27 35 27 L50 27 L50 15 Z" />
         <path d="M42 25 L42 37 L57 37 C61 37 65 41 65 45 C65 49 61 53 57 53 L42 53 L42 65 L57 65 C68 65 77 56 77 45 C77 34 68 25 57 25 Z" />
-    </g>
-</svg>
-SVG;
-    }
-
-    private function githubMarkSvg(): string
-    {
-        return <<<'SVG'
-<svg class="latch-git-release__icon-svg latch-git-release__icon-svg--app" width="52" height="52" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-    <rect width="32" height="32" rx="7" fill="#24292f" />
-    <g fill="#ffffff" transform="translate(16 16) scale(0.72) translate(-12 -12)">
-        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.794 8.205 11.387.6.11.82-.26.82-.577 0-.285-.01-1.04-.016-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.303-5.466-1.332-5.466-5.93 0-1.31.468-2.38 1.236-3.22-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23a11.5 11.5 0 0 1 3.003-.404c1.02.005 2.047.138 3.003.404 2.291-1.552 3.297-1.23 3.297-1.23.654 1.652.243 2.873.12 3.176.77.84 1.234 1.91 1.234 3.22 0 4.61-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .32.216.694.825.576C20.565 21.792 24 17.297 24 12 24 5.37 18.63 0 12 0z"/>
     </g>
 </svg>
 SVG;
