@@ -62,15 +62,18 @@
     place-items: center;
     width: 3.25rem;
     height: 3.25rem;
-    border-radius: calc(var(--lgr-radius) - 2px);
-    background: color-mix(in srgb, var(--lgr-accent-soft) 80%, var(--lgr-surface));
-    border: 1px solid color-mix(in srgb, var(--lgr-accent) 22%, var(--lgr-border));
-    color: var(--lgr-accent-hover);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    flex-shrink: 0;
 }
 
 .latch-git-release__icon-svg {
     display: block;
+    width: 3.25rem;
+    height: 3.25rem;
+}
+
+.latch-git-release__icon-svg--app {
+    border-radius: calc(var(--lgr-radius) - 2px);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
 }
 
 .latch-git-release__content {
@@ -294,8 +297,8 @@
     --lgr-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 14px 36px rgba(0, 0, 0, 0.45);
 }
 
-[data-theme="dark"] .latch-git-release__icon {
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+[data-theme="dark"] .latch-git-release__icon-svg--app {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
 [data-theme="dark"] .latch-git-release__btn--primary {
