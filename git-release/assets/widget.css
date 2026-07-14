@@ -158,15 +158,15 @@
 }
 
 .latch-git-release__badge--stable {
-    background: color-mix(in srgb, #10b981 16%, var(--lgr-surface-raised));
-    color: color-mix(in srgb, #047857 85%, var(--lgr-text));
-    border: 1px solid color-mix(in srgb, #10b981 28%, var(--lgr-border));
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #6ee7b7;
 }
 
 .latch-git-release__badge--pre {
-    background: color-mix(in srgb, #f59e0b 18%, var(--lgr-surface-raised));
-    color: color-mix(in srgb, #b45309 85%, var(--lgr-text));
-    border: 1px solid color-mix(in srgb, #f59e0b 32%, var(--lgr-border));
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
 }
 
 .latch-git-release__date::before {
@@ -306,6 +306,18 @@
 [data-theme="dark"] .latch-git-release__btn--primary:hover {
     background: var(--btn-bg-hover, var(--lgr-accent-hover));
     color: #fff;
+}
+
+[data-theme="dark"] .latch-git-release__badge--stable {
+    background: #064e3b;
+    color: #a7f3d0;
+    border-color: #047857;
+}
+
+[data-theme="dark"] .latch-git-release__badge--pre {
+    background: #78350f;
+    color: #fde68a;
+    border-color: #b45309;
 }
 
 /* Hydrated client slot — padding avoids margin collapse before .board-panels */

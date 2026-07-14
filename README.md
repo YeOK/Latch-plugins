@@ -4,7 +4,7 @@ Official distributable plugins for [Latch](https://github.com/YeOK/Latch) — in
 
 **Requires:** Latch **0.4.0+** (some plugins need newer core — see `min_latch_version` in each `plugin.json`). Always run `plugin-audit` before `plugin enable`.
 
-## Catalog (v1.0.9)
+## Catalog (v1.0.10)
 
 | Plugin | Version | Summary |
 |--------|---------|---------|
@@ -15,7 +15,7 @@ Official distributable plugins for [Latch](https://github.com/YeOK/Latch) — in
 | [slack-notify](slack-notify/) | 1.0.0 | Slack/Discord incoming webhook on posts and registrations |
 | [link-preview](link-preview/) | 1.0.3 | Onebox link cards + lazy YouTube/Vimeo embeds for standalone URLs |
 | [privacy-analytics](privacy-analytics/) | 1.0.1 | Plausible or Matomo analytics in the page head |
-| [git-release](git-release/) | 1.1.7 | GitHub release card on home — client-mode cache (Latch **0.4.6+**) |
+| [git-release](git-release/) | 1.2.0 | GitHub release card on home — client-mode cache (Latch **0.4.6+**) |
 
 Machine-readable index: [`catalog.json`](catalog.json).
 

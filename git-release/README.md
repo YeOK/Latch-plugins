@@ -48,6 +48,8 @@ GitHub release data is cached under `storage/plugins/git-release/cache/` for the
 
 Enable/disable busts `tagPlugin:git-release`. Core loads `plugin-clients.js` when any client-mode plugin is enabled.
 
+When a GitHub release body is a full Keep a Changelog file, the widget excerpt uses the `## [version]` section matching the release tag (not the file preamble or `[Unreleased]`).
+
 ## Assets
 
 Widget CSS is loaded via `theme.assets` (`/plugin/git-release/widget.css`) so guest page cache includes the stylesheet in `<head>`. Widget HTML hydrates via client-mode JSON. Requires Latch **0.4.6+** (client-mode plugins still run `theme.assets` / `theme.scripts`).

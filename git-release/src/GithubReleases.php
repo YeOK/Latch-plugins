@@ -99,9 +99,35 @@ final class GithubReleases
             'url' => $htmlUrl,
             'published' => $published,
             'prerelease' => (bool) ($data['prerelease'] ?? false),
-            'body_excerpt' => $this->bodyExcerpt($body),
+            'body_excerpt' => $this->bodyExcerpt($this->releaseNotesForTag($body, $tag)),
             'repo_url' => 'https://github.com/' . $ownerRepo,
         ];
+    }
+
+    /**
+     * GitHub releases sometimes ship the full CHANGELOG.md as the body. Prefer the
+     * Keep a Changelog section that matches this release tag (e.g. v0.4.6.0 → ## [0.4.6.0]).
+     */
+    private function releaseNotesForTag(string $body, string $tag): string
+    {
+        if ($body === '') {
+            return '';
+        }
+
+        $version = ltrim($tag, 'vV');
+        if ($version !== '') {
+            $escaped = preg_quote($version, '/');
+            if (preg_match('/^## \[' . $escaped . '\][^\n]*\r?\n(.*?)(?=^## \[|\z)/ms', $body, $matches) === 1) {
+                return trim($matches[1]);
+            }
+        }
+
+        if (preg_match('/^# Changelog\b/im', $body) === 1
+            && preg_match('/^## \[(?!Unreleased\])[^\]]+\][^\n]*\r?\n(.*?)(?=^## \[|\z)/ms', $body, $matches) === 1) {
+            return trim($matches[1]);
+        }
+
+        return $body;
     }
 
     private function bodyExcerpt(string $body, int $max = 160): string
