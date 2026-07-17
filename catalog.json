@@ -1,7 +1,7 @@
 {
     "name": "Latch plugin catalog",
     "latch_min_version": "0.4.0",
-    "release": "v1.0.10",
+    "release": "v1.0.11",
     "plugins": [
         {
             "slug": "forum-stats",
@@ -64,9 +64,9 @@
         {
             "slug": "git-release",
             "name": "Git release widget",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "min_latch_version": "0.4.6",
-            "summary": "Latest GitHub release card on the home page — client-mode guest cache, Keep a Changelog excerpt, and cache purge.",
+            "summary": "Latest GitHub release card on the home page — client-mode guest cache, theme-aware Latch icon, Keep a Changelog excerpt, and cache purge.",
             "hooks": ["home.before_boards", "route.register", "theme.assets", "theme.scripts"]
         }
     ]
