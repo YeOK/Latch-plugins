@@ -1,7 +1,7 @@
 {
     "name": "Latch plugin catalog",
     "latch_min_version": "0.4.0",
-    "release": "v1.0.12",
+    "release": "v1.0.13",
     "plugins": [
         {
             "slug": "forum-stats",
@@ -76,6 +76,14 @@
             "min_latch_version": "0.4.0",
             "summary": "Extra board icons (docs, server, security, OSS, and more) for Admin → Boards.",
             "hooks": ["board.icons"]
+        },
+        {
+            "slug": "avatar-url",
+            "name": "Custom avatar URL",
+            "version": "1.0.0",
+            "min_latch_version": "0.4.8",
+            "summary": "Members set an HTTPS avatar URL on their profile (operator host allowlist). Falls back to Gravatar/identicon.",
+            "hooks": ["avatar.resolve", "profile.form", "profile.before_save", "csp.img_src"]
         }
     ]
 }

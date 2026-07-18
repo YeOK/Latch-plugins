@@ -1,0 +1,41 @@
+{
+    "name": "Custom avatar URL",
+    "slug": "avatar-url",
+    "version": "1.0.0",
+    "min_latch_version": "0.4.8",
+    "description": "Let members set an HTTPS avatar URL on their profile (operator allowlist). Falls back to Gravatar/identicon when empty.",
+    "hooks": [
+        "avatar.resolve",
+        "profile.form",
+        "profile.before_save",
+        "csp.img_src"
+    ],
+    "cache": {
+        "guest_page": "bake",
+        "invalidate_on": [
+            "plugin",
+            "site"
+        ]
+    },
+    "settings_schema": [
+        {
+            "key": "allowed_hosts",
+            "type": "string_list",
+            "label": "Allowed image hosts",
+            "description": "One hostname per line (e.g. cdn.example.com). Optional prefix *.example.com for subdomains. Empty list blocks all custom URLs until configured.",
+            "default": []
+        },
+        {
+            "key": "members_can_set",
+            "type": "boolean",
+            "label": "Members can set a URL",
+            "description": "When off, only staff can change avatar URLs (field still shown if they have a URL).",
+            "default": true
+        }
+    ],
+    "permissions": {
+        "filesystem": [],
+        "network": [],
+        "config": []
+    }
+}
