@@ -1,0 +1,103 @@
+/* Fediverse share — topic header panel */
+.latch-fedi-share {
+  position: relative;
+  display: inline-block;
+}
+
+.latch-fedi-share__summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.latch-fedi-share__summary::-webkit-details-marker {
+  display: none;
+}
+
+.latch-fedi-share__icon {
+  display: block;
+  vertical-align: middle;
+}
+
+.latch-fedi-share__panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  z-index: 40;
+  width: min(20rem, calc(100vw - 2rem));
+  padding: 0.85rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border, #ccc);
+  background: var(--surface, #fff);
+  color: var(--text, #111);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.latch-fedi-share__label {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.latch-fedi-share__preview {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  border-radius: 0.35rem;
+  background: var(--surface-muted, rgba(0, 0, 0, 0.04));
+  word-break: break-word;
+  max-height: 6rem;
+  overflow: auto;
+}
+
+.latch-fedi-share__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.latch-fedi-share__instance {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border, #ccc);
+  border-radius: 0.35rem;
+  background: var(--input-bg, var(--surface, #fff));
+  color: inherit;
+  font: inherit;
+}
+
+.latch-fedi-share__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.latch-fedi-share__btn {
+  flex: 1 1 auto;
+  min-width: 5.5rem;
+}
+
+.latch-fedi-share__status {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  min-height: 1.1em;
+}
+
+.latch-fedi-share__status.is-ok {
+  color: var(--success, #0a7);
+}
+
+.latch-fedi-share__status.is-err {
+  color: var(--danger, #c33);
+}
+
+/* Dark theme / modern tokens */
+[data-theme="dark"] .latch-fedi-share__panel,
+html.theme-dark .latch-fedi-share__panel {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}

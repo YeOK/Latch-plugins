@@ -1,0 +1,82 @@
+{
+    "name": "Fediverse share",
+    "slug": "fediverse-share",
+    "version": "1.0.0",
+    "min_latch_version": "0.4.0",
+    "description": "Share topics to Mastodon, Misskey, and the Fediverse — instance picker, remembered host, copy link, and Web Share.",
+    "hooks": [
+        "topic.actions",
+        "route.register",
+        "theme.assets",
+        "theme.scripts"
+    ],
+    "cache": {
+        "guest_page": "bake",
+        "invalidate_on": [
+            "plugin",
+            "site"
+        ]
+    },
+    "settings_schema": [
+        {
+            "key": "enabled",
+            "type": "boolean",
+            "label": "Enable share control",
+            "description": "Show the Share button on topic pages.",
+            "default": true
+        },
+        {
+            "key": "default_instance",
+            "type": "string",
+            "label": "Default instance host",
+            "description": "Hostname only, e.g. mastodon.social. Pre-fills the instance field (members can change it).",
+            "default": ""
+        },
+        {
+            "key": "share_template",
+            "type": "string",
+            "label": "Share text template",
+            "description": "Placeholders: {title}, {url}, {site}. Newlines are allowed.",
+            "default": "{title}\n{url}"
+        },
+        {
+            "key": "preset_instances",
+            "type": "string_list",
+            "label": "Suggested instances",
+            "description": "Hostnames shown as quick picks (one per line). Leave empty for built-in defaults.",
+            "default": []
+        },
+        {
+            "key": "show_mastodon",
+            "type": "boolean",
+            "label": "Mastodon / Akkoma share",
+            "description": "Open /share?text= on the chosen instance.",
+            "default": true
+        },
+        {
+            "key": "show_misskey",
+            "type": "boolean",
+            "label": "Misskey share",
+            "description": "Open Misskey share intent on the chosen instance.",
+            "default": true
+        },
+        {
+            "key": "show_copy_link",
+            "type": "boolean",
+            "label": "Copy link button",
+            "default": true
+        },
+        {
+            "key": "show_web_share",
+            "type": "boolean",
+            "label": "Web Share (mobile)",
+            "description": "Use the browser share sheet when supported.",
+            "default": true
+        }
+    ],
+    "permissions": {
+        "filesystem": [],
+        "network": [],
+        "config": []
+    }
+}

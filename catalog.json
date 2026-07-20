@@ -1,7 +1,7 @@
 {
     "name": "Latch plugin catalog",
     "latch_min_version": "0.4.0",
-    "release": "v1.0.13",
+    "release": "v1.0.14",
     "plugins": [
         {
             "slug": "forum-stats",
@@ -84,6 +84,14 @@
             "min_latch_version": "0.4.8",
             "summary": "Members set an HTTPS avatar URL on their profile (operator host allowlist). Falls back to Gravatar/identicon.",
             "hooks": ["avatar.resolve", "profile.form", "profile.before_save", "csp.img_src"]
+        },
+        {
+            "slug": "fediverse-share",
+            "name": "Fediverse share",
+            "version": "1.0.0",
+            "min_latch_version": "0.4.0",
+            "summary": "Share topics to Mastodon, Misskey, and the Fediverse — instance picker, copy link, Web Share.",
+            "hooks": ["topic.actions", "route.register", "theme.assets", "theme.scripts"]
         }
     ]
 }
