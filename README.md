@@ -4,7 +4,7 @@ Official distributable plugins for [Latch](https://github.com/YeOK/Latch) — in
 
 **Requires:** Latch **0.4.0+** (some plugins need newer core — see `min_latch_version` in each `plugin.json`). Always run `plugin-audit` before `plugin enable`.
 
-## Catalog (v1.0.14)
+## Catalog (v1.0.15)
 
 | Plugin | Version | Summary |
 |--------|---------|---------|
@@ -18,7 +18,7 @@ Official distributable plugins for [Latch](https://github.com/YeOK/Latch) — in
 | [git-release](git-release/) | 1.2.1 | GitHub release card on home — client-mode cache (Latch **0.4.6+**) |
 | [board-icon-pack](board-icon-pack/) | 1.0.0 | Extra board icons for Admin → Boards |
 | [avatar-url](avatar-url/) | 1.0.0 | Custom HTTPS avatar URLs (host allowlist; Latch **0.4.8+**) |
-| [fediverse-share](fediverse-share/) | 1.0.0 | Share topics to Mastodon / Misskey / Fediverse |
+| [fediverse-share](fediverse-share/) | 1.0.1 | Share topics to Mastodon / Misskey / Fediverse |
 
 Machine-readable index: [`catalog.json`](catalog.json).
 
@@ -50,7 +50,7 @@ php bin/latch plugin enable forum-stats
 ### Bundle (all catalog plugins)
 
 ```bash
-php bin/latch plugin install ./latch-plugins-1.0.14.zip
+php bin/latch plugin install ./latch-plugins-1.0.15.zip
 # installs each slug under plugins/ — still disabled until you enable individually
 ```
 
@@ -59,7 +59,7 @@ php bin/latch plugin install ./latch-plugins-1.0.14.zip
 See **[docs/RELEASE.md](docs/RELEASE.md)** for the full checklist.
 
 ```bash
-./scripts/publish-release.sh v1.0.14   # build, upload, verify
+./scripts/publish-release.sh v1.0.15   # build, upload, verify
 ./scripts/check-release.sh             # audit local + GitHub assets anytime
 ```
 

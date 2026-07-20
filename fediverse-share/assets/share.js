@@ -1,11 +1,13 @@
 /**
- * Fediverse share — instance memory, open share URLs, copy, Web Share API.
+ * Fediverse share — fixed panel placement (escapes .topic-view overflow:hidden),
+ * instance memory, share URLs, copy, Web Share API.
  * Copyright (c) 2026 Latch contributors — MIT
  */
 (function () {
   'use strict';
 
   var STORAGE_KEY = 'latch.fediverse.instance';
+  var GAP = 8;
 
   function normalizeInstance(raw) {
     if (!raw || typeof raw !== 'string') {
@@ -69,6 +71,69 @@
     return def || loadRemembered();
   }
 
+  function placePanel(root) {
+    var summary = root.querySelector('.latch-fedi-share__summary');
+    var panel = root.querySelector('.latch-fedi-share__panel');
+    if (!summary || !panel || !root.open) {
+      return;
+    }
+
+    panel.classList.add('is-fixed');
+    // Reset so size measurement is stable
+    panel.style.left = '0';
+    panel.style.top = '0';
+    panel.style.visibility = 'hidden';
+
+    var rect = summary.getBoundingClientRect();
+    var pw = panel.offsetWidth || 320;
+    var ph = panel.offsetHeight || 200;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+
+    var left = rect.right - pw;
+    if (left < GAP) {
+      left = GAP;
+    }
+    if (left + pw > vw - GAP) {
+      left = Math.max(GAP, vw - pw - GAP);
+    }
+
+    var top = rect.bottom + GAP;
+    if (top + ph > vh - GAP) {
+      // Prefer above the button when not enough room below
+      var above = rect.top - ph - GAP;
+      if (above >= GAP) {
+        top = above;
+      } else {
+        top = Math.max(GAP, vh - ph - GAP);
+      }
+    }
+
+    panel.style.left = Math.round(left) + 'px';
+    panel.style.top = Math.round(top) + 'px';
+    panel.style.visibility = '';
+  }
+
+  function clearPanelPlacement(root) {
+    var panel = root.querySelector('.latch-fedi-share__panel');
+    if (!panel) {
+      return;
+    }
+    panel.classList.remove('is-fixed');
+    panel.style.left = '';
+    panel.style.top = '';
+    panel.style.visibility = '';
+  }
+
+  function closeOthers(except) {
+    document.querySelectorAll('details.latch-fedi-share[open]').forEach(function (el) {
+      if (el !== except) {
+        el.open = false;
+        clearPanelPlacement(el);
+      }
+    });
+  }
+
   function bindRoot(root) {
     if (root.getAttribute('data-fedi-bound') === '1') {
       return;
@@ -85,6 +150,20 @@
     if (webBtn && typeof navigator.share === 'function') {
       webBtn.hidden = false;
     }
+
+    root.addEventListener('toggle', function () {
+      if (root.open) {
+        closeOthers(root);
+        // Two frames: layout open state, then measure
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            placePanel(root);
+          });
+        });
+      } else {
+        clearPanelPlacement(root);
+      }
+    });
 
     root.addEventListener('click', function (ev) {
       var btn = ev.target.closest('[data-fedi-action]');
@@ -157,8 +236,14 @@
     });
   }
 
+  function onScrollOrResize() {
+    document.querySelectorAll('details.latch-fedi-share[open]').forEach(placePanel);
+  }
+
   function init() {
     document.querySelectorAll('[data-latch-fedi-share]').forEach(bindRoot);
+    window.addEventListener('resize', onScrollOrResize);
+    window.addEventListener('scroll', onScrollOrResize, true);
   }
 
   if (document.readyState === 'loading') {

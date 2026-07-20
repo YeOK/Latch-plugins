@@ -1,7 +1,17 @@
-/* Fediverse share — topic header panel */
+/* Fediverse share — topic header panel
+ *
+ * Parent .topic-view uses overflow:hidden (card chrome). Absolute panels get
+ * clipped, so open state uses position:fixed (coords set by share.js).
+ */
+
 .latch-fedi-share {
   position: relative;
   display: inline-block;
+  z-index: 1;
+}
+
+.latch-fedi-share[open] {
+  z-index: 400;
 }
 
 .latch-fedi-share__summary {
@@ -19,17 +29,31 @@
 }
 
 .latch-fedi-share__panel {
+  /* Closed: keep in DOM but out of flow; JS switches to fixed when open */
   position: absolute;
   right: 0;
   top: calc(100% + 0.35rem);
-  z-index: 40;
-  width: min(20rem, calc(100vw - 2rem));
+  z-index: 400;
+  width: min(20rem, calc(100vw - 1.5rem));
+  max-width: calc(100vw - 1.5rem);
+  max-height: min(70vh, 24rem);
+  overflow: auto;
   padding: 0.85rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--border, #ccc);
-  background: var(--surface, #fff);
-  color: var(--text, #111);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border, #d8dee8);
+  background: var(--surface-raised, var(--surface, #fff));
+  color: var(--text, #1a1f2e);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.08),
+    0 12px 32px rgba(15, 23, 42, 0.18);
+}
+
+/* When JS marks fixed placement (escapes overflow:hidden ancestors) */
+.latch-fedi-share__panel.is-fixed {
+  position: fixed;
+  right: auto;
+  top: auto;
+  margin: 0;
 }
 
 .latch-fedi-share__label {
@@ -38,6 +62,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  color: var(--muted, #64748b);
 }
 
 .latch-fedi-share__preview {
@@ -46,7 +71,9 @@
   font-size: 0.875rem;
   line-height: 1.4;
   border-radius: 0.35rem;
-  background: var(--surface-muted, rgba(0, 0, 0, 0.04));
+  border: 1px solid var(--border, #d8dee8);
+  background: var(--surface, #fff);
+  color: var(--text, #1a1f2e);
   word-break: break-word;
   max-height: 6rem;
   overflow: auto;
@@ -63,12 +90,17 @@
 .latch-fedi-share__instance {
   width: 100%;
   box-sizing: border-box;
-  padding: 0.4rem 0.55rem;
-  border: 1px solid var(--border, #ccc);
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--border, #d8dee8);
   border-radius: 0.35rem;
-  background: var(--input-bg, var(--surface, #fff));
-  color: inherit;
+  background: var(--surface, #fff);
+  color: var(--text, #1a1f2e);
   font: inherit;
+}
+
+.latch-fedi-share__instance:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent, #2f6fed) 55%, transparent);
+  outline-offset: 1px;
 }
 
 .latch-fedi-share__actions {
@@ -96,8 +128,26 @@
   color: var(--danger, #c33);
 }
 
-/* Dark theme / modern tokens */
 [data-theme="dark"] .latch-fedi-share__panel,
 html.theme-dark .latch-fedi-share__panel {
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  background: var(--surface-raised, #222b38);
+  border-color: var(--border, #2d3748);
+  color: var(--text, #e7ecf3);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+[data-theme="dark"] .latch-fedi-share__preview,
+html.theme-dark .latch-fedi-share__preview {
+  background: var(--surface, #1a212b);
+  border-color: var(--border, #2d3748);
+  color: var(--text, #e7ecf3);
+}
+
+[data-theme="dark"] .latch-fedi-share__instance,
+html.theme-dark .latch-fedi-share__instance {
+  background: var(--surface, #1a212b);
+  border-color: var(--border, #2d3748);
+  color: var(--text, #e7ecf3);
 }

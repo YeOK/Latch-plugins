@@ -28,9 +28,12 @@ final class Plugin implements PluginInterface
         $panel = new SharePanel($settings);
 
         $pluginPath = $context->path();
-        $assetVersion = $app->assetVersion();
         $cssPath = $pluginPath . '/assets/share.css';
         $jsPath = $pluginPath . '/assets/share.js';
+        // Bust CDN/browser cache on plugin file changes (not only app version).
+        $assetVersion = $app->assetVersion()
+            . '.' . (string) (@filemtime($cssPath) ?: 0)
+            . '.' . (string) (@filemtime($jsPath) ?: 0);
 
         $context->hooks()->add(
             HookName::ROUTE_REGISTER,

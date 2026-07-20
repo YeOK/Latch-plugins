@@ -4,7 +4,7 @@ Share Latch topics to the Fediverse from the topic header — instance picker, r
 
 **Requires:** Latch **0.4.0+** (`topic.actions` + theme asset hooks)  
 **Slug:** `fediverse-share`  
-**Version:** 1.0.0
+**Version:** 1.0.1
 
 ## Install
 

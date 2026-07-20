@@ -58,6 +58,11 @@ final class ShareUrlBuilder
      */
     public static function formatShareText(string $template, array $vars): string
     {
+        $template = str_replace(['\\n', "\r\n", "\r"], "\n", $template);
+        if (trim($template) === '') {
+            $template = "{title}\n{url}";
+        }
+
         $text = str_replace(
             ['{title}', '{url}', '{site}'],
             [
@@ -70,8 +75,16 @@ final class ShareUrlBuilder
 
         // Collapse excessive blank lines; keep intentional single newlines.
         $text = preg_replace("/\n{3,}/", "\n\n", $text) ?? $text;
+        $text = trim($text);
 
-        return trim($text);
+        // If template lost separators (e.g. "{title}{url}"), keep text readable.
+        $title = $vars['title'];
+        $url = $vars['url'];
+        if ($title !== '' && $url !== '' && !str_contains($text, "\n") && str_contains($text, $title . $url)) {
+            $text = $title . "\n" . $url;
+        }
+
+        return $text;
     }
 
     public static function mastodonShareUrl(string $instance, string $text): string

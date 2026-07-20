@@ -1,7 +1,7 @@
 {
     "name": "Fediverse share",
     "slug": "fediverse-share",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "min_latch_version": "0.4.0",
     "description": "Share topics to Mastodon, Misskey, and the Fediverse — instance picker, remembered host, copy link, and Web Share.",
     "hooks": [

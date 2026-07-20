@@ -1,7 +1,7 @@
 {
     "name": "Latch plugin catalog",
     "latch_min_version": "0.4.0",
-    "release": "v1.0.14",
+    "release": "v1.0.15",
     "plugins": [
         {
             "slug": "forum-stats",
@@ -88,7 +88,7 @@
         {
             "slug": "fediverse-share",
             "name": "Fediverse share",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "min_latch_version": "0.4.0",
             "summary": "Share topics to Mastodon, Misskey, and the Fediverse — instance picker, copy link, Web Share.",
             "hooks": ["topic.actions", "route.register", "theme.assets", "theme.scripts"]
